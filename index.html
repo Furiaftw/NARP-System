@@ -1,0 +1,2019 @@
+import React, { useState } from 'react';
+import { 
+  Activity, 
+  Eye, 
+  Skull, 
+  Beaker, 
+  Scroll, 
+  Swords, 
+  Menu,
+  X,
+  Calculator,
+  Shield,
+  Book,
+  Copy,
+  Award,
+  Zap,
+  Leaf,
+  Hexagon,
+  Flame
+} from 'lucide-react';
+
+// --- DATA CONSTANTS ---
+const rankValues = { E: 0, D: 5, C: 10, B: 15, A: 20, S: 25 };
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('jinchuriki'); 
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const navItems = [
+    { id: 'ranks', label: 'Rank System', icon: Award },
+    { id: 'chakra', label: 'OCS & Tracking', icon: Activity },
+    { id: 'battlemodes', label: 'Battle Modes', icon: Zap },
+    { id: 'sagemode', label: 'Sage Mode', icon: Leaf },
+    { id: 'curseseal', label: 'Curse Seal', icon: Hexagon },
+    { id: 'jinchuriki', label: 'Jinchuriki System', icon: Flame },
+    { id: 'genjutsu', label: 'Genjutsu', icon: Eye },
+    { id: 'poison', label: 'Poison System', icon: Skull },
+    { id: 'consumables', label: 'Consumables', icon: Beaker },
+    { id: 'summoning', label: 'Summoning', icon: Scroll },
+    { id: 'customItems', label: 'Custom Items', icon: Swords },
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'ranks': return <RankSystemView />;
+      case 'chakra': return <ChakraSystemView />;
+      case 'battlemodes': return <BattleModesView />;
+      case 'sagemode': return <SageModeView />;
+      case 'curseseal': return <CurseSealView />;
+      case 'jinchuriki': return <JinchurikiSystemView />;
+      case 'genjutsu': return <GenjutsuSystemView />;
+      case 'poison': return <PoisonSystemView />;
+      case 'consumables': return <ConsumablesView />;
+      case 'summoning': return <SummoningSystemView />;
+      case 'customItems': return <CustomItemsView />;
+      default: return <div className="text-white">Select a valid tab.</div>;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans flex flex-col selection:bg-cyan-500 selection:text-white">
+      
+      {/* Top Navbar (Replaces the Sidebar to fix the split-screen layout) */}
+      <header className="bg-slate-900 border-b border-cyan-500/30 sticky top-0 z-50 shadow-[0_4px_24px_rgba(6,182,212,0.1)]">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex items-center gap-2 shrink-0 pr-4">
+              <Book size={24} className="text-cyan-400" />
+              <h1 className="text-xl font-black text-cyan-400 tracking-widest uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
+                NARP SYSTEMS
+              </h1>
+            </div>
+
+            {/* Desktop Nav (Horizontal scroll for many tabs) */}
+            <nav className="hidden lg:flex items-center gap-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all duration-200 whitespace-nowrap ${
+                      isActive 
+                        ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.2)]' 
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-cyan-400'
+                    }`}
+                  >
+                    <Icon size={16} className={isActive ? 'text-cyan-400' : ''} />
+                    <span className="font-medium text-sm">{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Mobile Menu Toggle */}
+            <button 
+              onClick={() => setSidebarOpen(!isSidebarOpen)} 
+              className="lg:hidden text-cyan-400 focus:outline-none p-2 shrink-0"
+            >
+              {isSidebarOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Nav Dropdown (Grid layout to fit all systems neatly) */}
+        {isSidebarOpen && (
+          <nav className="lg:hidden border-t border-slate-800 bg-slate-900 px-4 py-4 grid grid-cols-2 gap-2 max-h-[70vh] overflow-y-auto shadow-xl">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
+                  className={`flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 text-left ${
+                    isActive 
+                      ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-500/50' 
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-cyan-400 border border-transparent'
+                  }`}
+                >
+                  <Icon size={18} className={isActive ? 'text-cyan-400 shrink-0' : 'shrink-0'} />
+                  <span className="font-medium text-sm leading-tight">{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        )}
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 p-5 md:p-10 overflow-y-auto relative z-0">
+        <div className="max-w-4xl mx-auto pb-24">
+          {renderContent()}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// --- SUB-VIEWS ---
+
+function JinchurikiSystemView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Jinchuriki System <Flame className="text-orange-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules, mechanics, and transformations for the hosts of the Tailed Beasts.</p>
+      </header>
+
+      <Section title="Introduction & Obtainment">
+        <p className="text-sm text-slate-300 mb-4">A Jinchuriki (vessel/host) is an individual who has had a Tailed Beast sealed within them. The beast grants immense power, but comes with great risk and mental strain. The bond between them is called the <strong>Friendship Level</strong>.</p>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-slate-900 p-4 rounded border border-slate-800">
+            <h4 className="text-orange-400 font-bold mb-1">Method 1: Starting Host</h4>
+            <p className="text-sm text-slate-300">Chosen during character creation. The character starts at exactly <strong>10% Friendship Level</strong>. You must work on building the relationship from the beginning without the ability to immediately harness the beast's power.</p>
+          </div>
+          <div className="bg-slate-900 p-4 rounded border border-slate-800">
+            <h4 className="text-orange-400 font-bold mb-1">Method 2: In-Roleplay</h4>
+            <p className="text-sm text-slate-300">Stealing a beast, gaining control of a rogue beast, or being chosen by an organization. Highly complex and dangerous. The new host also starts at exactly <strong>10% Friendship Level</strong>.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Mechanics & Friendship">
+        <p className="text-sm text-slate-300 mb-4">The Tailed Beast's chakra is raw and volatile. The higher the Friendship Level, the more the Jinchuriki can access the full potential without losing themselves to feral outbursts.</p>
+        
+        <div className="space-y-2 mb-6">
+          <div className="bg-slate-900/50 p-3 rounded border-l-4 border-red-500 text-sm"><strong className="text-white">10% - 30% (Hostile):</strong> Fights host's will. Little control. Manifests unpredictably during emotions.</div>
+          <div className="bg-slate-900/50 p-3 rounded border-l-4 border-yellow-500 text-sm"><strong className="text-white">40% - 80% (Moderate):</strong> Better management. Taps into abilities without losing themselves. Beast may assist.</div>
+          <div className="bg-slate-900/50 p-3 rounded border-l-4 border-green-500 text-sm"><strong className="text-white">90% - 100% (High):</strong> Fully harnesses power. Works in harmony. Beast becomes a willing ally.</div>
+        </div>
+
+        <h4 className="text-white font-bold mb-3 border-b border-slate-800 pb-2">Stages of Mastery</h4>
+        <div className="overflow-x-auto mb-6">
+          <table className="w-full text-left text-sm text-slate-300 border border-slate-700 rounded-lg">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">Skill %</th>
+                <th className="px-4 py-3 font-medium text-orange-400">Max BCU</th>
+                <th className="px-4 py-3 font-medium">Absorption Rate</th>
+                <th className="px-4 py-3 font-medium">Extra Ability</th>
+                <th className="px-4 py-3 font-medium text-cyan-400">TB Modes</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/50 bg-slate-900/50">
+              {[
+                { p: '20%', max: 10, abs: 2, ex: 'Healing Factor', mode: 'Initial Form' },
+                { p: '40%', max: 20, abs: 5, ex: 'Minor TB Bomb', mode: 'Cloak V.1' },
+                { p: '60%', max: 30, abs: 8, ex: '---', mode: 'Partial Transform' },
+                { p: '80%', max: 40, abs: 12, ex: 'Base TB Bomb', mode: 'Cloak V.2' },
+                { p: '100%', max: 50, abs: 15, ex: '---', mode: 'Full TB Form' },
+              ].map(row => (
+                <tr key={row.p} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-4 py-2 font-bold text-white">{row.p}</td>
+                  <td className="px-4 py-2 text-orange-300">{row.max}</td>
+                  <td className="px-4 py-2">{row.abs}/turn</td>
+                  <td className="px-4 py-2">{row.ex}</td>
+                  <td className="px-4 py-2 text-cyan-300">{row.mode}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h4 className="text-white font-bold mb-3 border-b border-slate-800 pb-2">Extra Abilities Explained</h4>
+        
+        <div className="space-y-4">
+          <div className="bg-slate-900 p-4 rounded border border-slate-800">
+            <h5 className="font-bold text-green-400 mb-1">Healing Factor (Unlocks at 20%)</h5>
+            <p className="text-sm text-slate-300 mb-2">Initially only works while in a Jinchuriki form. At 50% friendship, can be used outside of forms (but is weaker). Format below: (Cost out of form / Cost in form).</p>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>Minor:</strong> 5/2 BCU (Same or 1 turn). Small cuts, bruises, burns.</li>
+              <li><strong>Medium:</strong> 8/3 BCU (1-2 turns). Deep gashes, fractured bones.</li>
+              <li><strong>Major:</strong> 10/5 BCU (3-4 turns). Shattered bones, damaged organs. <em>(Requires 50%+ Friendship)</em></li>
+            </ul>
+            <p className="text-xs text-slate-500 mt-2 italic">Note: Cannot regenerate limbs. Healing is PER wound.</p>
+          </div>
+
+          <div className="bg-slate-900 p-4 rounded border border-slate-800">
+            <h5 className="font-bold text-purple-400 mb-1">Tailed Beast Bombs & Enhancements</h5>
+            <p className="text-sm text-slate-300 mb-2"><strong>Enhancing Jutsu:</strong> Strikes +1 rank higher (cap S-Rank). Cost is (Original CU + Half original cost in BCU). If in a TB Mode, all jutsu use pure BCU. B-Rank = 1 turn CD. A/S-Rank = 2 turn CD.</p>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>Minor TB Bomb:</strong> Unlocks at 40%. Highly destructive variant.</li>
+              <li><strong>Base TB Bomb:</strong> Unlocks at 80%. Decimates landscapes.</li>
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Transformations & Forms">
+        <div className="bg-orange-950/30 border border-orange-900/50 p-4 rounded-lg mb-6">
+          <strong className="text-orange-400 block mb-1">Global Recharge Rule</strong>
+          <p className="text-sm text-orange-200/80">BCU cannot regenerate while transformed. When exiting a transformation, you must wait <strong>half the number of turns spent in that form (rounded up)</strong> before absorbing BCU again. The additional BCU granted by transformations can only be obtained once per RP per stage.</p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="border border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-slate-900 p-4 border-b border-slate-700">
+              <h4 className="text-lg font-bold text-white">Initial Form <span className="text-sm font-normal text-slate-400 ml-2">(Unlocks at 20%)</span></h4>
+            </div>
+            <div className="p-4 bg-slate-900/50">
+              <p className="text-sm text-slate-300 mb-3">Translucent aura. Boosts physicals. Can suppress visible cloak to keep only physical changes.</p>
+              <p className="text-sm text-cyan-400 font-medium mb-3">Bonus: +10 Max BCU | +1 Strength | +10% Ninjutsu.</p>
+              <div className="flex gap-2 flex-wrap text-xs text-slate-400">
+                <span className="bg-slate-800 px-2 py-1 rounded">Drain at 20%: 10 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">30%: 8 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">40%: 6 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">50%: 4 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">60%: 2 BCU/turn</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-slate-900 p-4 border-b border-slate-700">
+              <h4 className="text-lg font-bold text-white">Version 1 Cloak <span className="text-sm font-normal text-slate-400 ml-2">(Unlocks at 40%)</span></h4>
+            </div>
+            <div className="p-4 bg-slate-900/50">
+              <p className="text-sm text-slate-300 mb-3">Dense, bubbling red shroud. Can manifest chakra limbs/tails (up to beast max). Grants a C-Rank Simulated Shield.</p>
+              <p className="text-sm text-cyan-400 font-medium mb-3">Bonus: +20 Max BCU | +1 Strength | +20% Ninjutsu.</p>
+              <div className="flex gap-2 flex-wrap text-xs text-slate-400">
+                <span className="bg-slate-800 px-2 py-1 rounded">Drain at 40%: 8 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">60%: 6 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">80%: 4 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">100%: 2 BCU/turn</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-slate-900 p-4 border-b border-slate-700">
+              <h4 className="text-lg font-bold text-white">Partial Transformation <span className="text-sm font-normal text-slate-400 ml-2">(Unlocks at 60%)</span></h4>
+            </div>
+            <div className="p-4 bg-slate-900/50">
+              <p className="text-sm text-slate-300 mb-3">Manifest specific beast limbs perfectly. Attempting a full body partial transformation results in a twisted, fleshy, grotesque form.</p>
+              <p className="text-sm text-cyan-400 font-medium mb-1">Bonus: +1 Strength.</p>
+              <p className="text-sm text-slate-400">Drain: X BCU per turn/use (depends on technique rank). Large body manifestations cost 4 BCU/turn.</p>
+            </div>
+          </div>
+
+          <div className="border border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-slate-900 p-4 border-b border-slate-700">
+              <h4 className="text-lg font-bold text-white">Version 2 Cloak <span className="text-sm font-normal text-slate-400 ml-2">(Unlocks at 80%)</span></h4>
+            </div>
+            <div className="p-4 bg-slate-900/50">
+              <p className="text-sm text-slate-300 mb-3">Dark red/black shroud defining physical beast traits. Grants B-to-A Rank Shield.</p>
+              <ul className="text-sm text-slate-400 space-y-1 mb-3 list-disc list-inside">
+                <li><strong>Chakra Bones:</strong> Solidified structures serving as armor/weapons. Boosts shield to A-Rank. Costs +2 BCU/turn.</li>
+                <li><strong>Corrosive Chakra:</strong> Burns organic matter on contact (Medium burns). Harms the user unless activated voluntarily (Only Saiken keeps status voluntarily).</li>
+                <li><strong>Overextended Form:</strong> Monstrous semi-complete state. Max corrosive effect. Costs +2 BCU/turn.</li>
+              </ul>
+              <p className="text-sm text-cyan-400 font-medium mb-3">Bonus: +30 Max BCU | +1 Strength | +30% Ninjutsu.</p>
+              <div className="flex gap-2 flex-wrap text-xs text-slate-400">
+                <span className="bg-slate-800 px-2 py-1 rounded">Drain at 80%: 4 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">90%: 3 BCU/turn</span>
+                <span className="bg-slate-800 px-2 py-1 rounded">100%: 2 BCU/turn</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-slate-900 p-4 border-b border-slate-700">
+              <h4 className="text-lg font-bold text-white">Full Tailed Beast Form <span className="text-sm font-normal text-slate-400 ml-2">(Unlocks at 100%)</span></h4>
+            </div>
+            <div className="p-4 bg-slate-900/50">
+              <p className="text-sm text-slate-300 mb-3">Full scale replica of the beast. Immensely powerful and destructive. Can be activated momentarily for a single attack (costs 2 BCU + Jutsu BCU cost).</p>
+              <p className="text-sm text-cyan-400 font-medium mb-3">Bonus: +40 Max BCU | +2 Strength | +40% Ninjutsu & Taijutsu.</p>
+              <p className="text-sm text-slate-400">Drain: 2 BCU/turn.</p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Rage System & Limits">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="bg-red-950/20 border border-red-900/50 p-4 rounded-lg">
+              <h5 className="font-bold text-red-400 mb-2 border-b border-red-900/50 pb-2">The Rage State</h5>
+              <p className="text-sm text-slate-300 mb-2">Triggers when chakra pool hits 0 CU. Immediately enters V1 form. Hostile but retains some combat focus. Unconscious when BCU depletes.</p>
+              <p className="text-sm text-red-300 mb-2"><strong>2 Turns in V1:</strong> Escalates to V2. Attacks indiscriminately (friend or foe). Chakra cloak lowers lifespan by 1 year per turn.</p>
+              <p className="text-sm text-red-500 font-bold mb-2"><strong>2 Turns in V2:</strong> Seal breaks entirely. Instant permanent death. Beast is released.</p>
+              <p className="text-xs text-green-400 mt-2">At 80% Friendship, you no longer have to worry about these Rage events.</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-slate-900 p-4 rounded border border-slate-800">
+              <h5 className="font-bold text-white mb-2">System Limitations</h5>
+              <ul className="text-sm text-slate-400 space-y-1 list-disc list-inside">
+                <li>Cannot be combined with another Major Battle Mode.</li>
+                <li>Statistics cap at S-Rank and 100%.</li>
+                <li><strong>Genjutsu Disruption:</strong> At 80% Friendship, the Beast can disrupt the host's chakra to break Genjutsu/Paralysis. Not automatic. Cannot be put under Genjutsu while in TB Form.</li>
+                <li><strong>Simulated Shields:</strong> Reduce incoming attacks below its rank by 1 rank. Absorbs a set number of hits before collapsing. Bypassed by Genjutsu/Internal damage.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Beast Profiles & Unique Benefits">
+        <p className="text-sm text-slate-300 mb-6">Each Tailed Beast grants completely unique abilities, Kekkei Genkai, and characteristics to their host as friendship increases. Click on a beast to view their details.</p>
+        
+        {/* Shukaku */}
+        <BeastProfile name="Shukaku" tails="1" title="The One Tail">
+          <p className="text-sm text-slate-300 mb-3">Childish, short-tempered, proud of defenses. Hates humans and Kurama. Made of sand.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Gains Sand Release KKG.</li>
+              <li><strong>50%:</strong> Shukaku's Curse Seals (requires specific jutsu).</li>
+              <li><strong>80%:</strong> Auto-defense (Sand Shield jutsu costs 1 rank less).</li>
+              <li><strong>Initial Form Aura:</strong> Hardens into protective sand (reduces physical/elemental damage by 1 tier). Aesthetic: Sandy hair, claws, sand patterns, gold eyes with star pupils.</li>
+              <li><strong>Full TB Form Exception:</strong> Sand construct. Can regenerate limbs (Minor 2 BCU, Medium 4 BCU/1 turn, Major 6 BCU/2 turns).</li>
+            </ul>
+          </div>
+          <div className="bg-slate-950 p-3 rounded border border-slate-800">
+            <h6 className="text-white font-bold mb-1 text-sm">Sand Release (KKG)</h6>
+            <p className="text-sm text-slate-400">Manipulate sand density for swift attacks or strong defenses. Weakness: Large amounts of water weaken density (-1 to CC). Explosive clay, gold dust, or oil also counter it. Cannot use gold/iron sand.</p>
+          </div>
+        </BeastProfile>
+
+        {/* Matatabi */}
+        <BeastProfile name="Matatabi" tails="2" title="The Two Tails">
+          <p className="text-sm text-slate-300 mb-3">Calm, polite, proud. Made of cobalt blue and black flames. Heterochromatic eyes.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>Base:</strong> Matatabi's Flames. Fire Release burns away target's CU equal to the jutsu's original rank cost per hit (e.g., C-rank burns 4 CU).</li>
+              <li><strong>60%:</strong> Flat +1 bonus to Speed.</li>
+              <li><strong>80%:</strong> Unlocks Cat's Eye Dojutsu.</li>
+              <li><strong>Initial Form Aura:</strong> Radiates blue flames. Melee attacks cause minor burn damage. CQC gains ignition effect. Aesthetic: Blue fire hair, claws, green-blue eyes.</li>
+            </ul>
+          </div>
+          <div className="bg-slate-950 p-3 rounded border border-slate-800">
+            <h6 className="text-white font-bold mb-1 text-sm">Cat's Eye (Dojutsu)</h6>
+            <p className="text-sm text-slate-400">Costs 4 CU. Grants thermal vision to track heat signatures through smoke/darkness. Enhanced low-light vision. Cannot detect inanimate objects.</p>
+          </div>
+        </BeastProfile>
+
+        {/* Isobu */}
+        <BeastProfile name="Isobu" tails="3" title="The Three Tails">
+          <p className="text-sm text-slate-300 mb-3">Timid, reserved, observant. Giant turtle with a crab-like shell.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Gains Coral Release KKG.</li>
+              <li><strong>60%:</strong> Protective Turtle Shell Jutsu (B-Rank).</li>
+              <li><strong>Initial Form Aura:</strong> Thick coral shell armor. Water Release power boosted by +1 rank. Aesthetic: Coral-like hair, webbed digits, shell ridges, red reptilian eyes.</li>
+            </ul>
+          </div>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div className="bg-slate-950 p-3 rounded border border-slate-800">
+              <h6 className="text-white font-bold mb-1 text-sm">Coral Release (KKG)</h6>
+              <p className="text-sm text-slate-400">Sprout coral from surfaces. Saps opponent's chakra (absorbs half technique cost). Weakness: Takes x2 damage from Lightning and Fire release. Absorption occurs only once per jutsu.</p>
+            </div>
+            <div className="bg-slate-950 p-3 rounded border border-slate-800">
+              <h6 className="text-white font-bold mb-1 text-sm">Protective Turtle Shell</h6>
+              <p className="text-sm text-slate-400">6 BCU. Form a durable shell. Reflects physical force. Absorbs up to 1 A-Rank, 2 B-Rank, 4 C-Rank. Force of first 3 physical hits stored and released on 3rd strike.</p>
+            </div>
+          </div>
+        </BeastProfile>
+
+        {/* Son Goku */}
+        <BeastProfile name="Son Gokū" tails="4" title="The Four Tails">
+          <p className="text-sm text-slate-300 mb-3">Prideful, hates humans, respects tradition. Giant ape with red fur, green skin, and a lava dome mouth.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Gains Lava Release KKG (includes true volcanic magma).</li>
+              <li><strong>60%:</strong> Massive 30% bonus in Taijutsu.</li>
+              <li><strong>80%:</strong> Unlocks Green Flames (aesthetic only, Fire Release burns bright green).</li>
+              <li><strong>Initial Form Aura:</strong> Molten magma texture. Shimmering heat deals minor burn damage within 2 meters. Aesthetic: Lava-colored hair, glowing veins, golden-orange ape eyes.</li>
+            </ul>
+          </div>
+        </BeastProfile>
+
+        {/* Kokuo */}
+        <BeastProfile name="Kokuō" tails="5" title="The Five Tails">
+          <p className="text-sm text-slate-300 mb-3">Quiet, reserved, peaceful. White horse with a dolphin head.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Gains Steam Release KKG (both forms).</li>
+              <li><strong>60%:</strong> Kokuō's Jab. Physical techniques infused with chakra gain speed boost. Can pay 2 BCU per melee strike for speed boost (caps at S-Rank speed).</li>
+              <li><strong>Initial Form Aura:</strong> Superheated steam enhances movements. Consecutive movement boosts next physical strike by +1 rank (max 2 ranks). 2 turn CD. Aesthetic: Windswept hair, mist streaks, pale silver eyes.</li>
+            </ul>
+          </div>
+        </BeastProfile>
+
+        {/* Saiken */}
+        <BeastProfile name="Saiken" tails="6" title="The Six Tails">
+          <p className="text-sm text-slate-300 mb-3">Energetic, quirky, approachable. Giant bipedal slug covered in slime.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Soap Bubble Ninjutsu (Hiden).</li>
+              <li><strong>50%:</strong> Wisdom Wolf Decay (B/A-Rank Acid).</li>
+              <li><strong>60%:</strong> Leech Gap (B-Rank Continuous Acid).</li>
+              <li><strong>Initial Form Aura:</strong> Viscous slime. Physical contact leaves corrosive alkali (corrodes metal/flesh). Aesthetic: Mucus skin, bioluminescent marks, pale white/green eyes.</li>
+            </ul>
+          </div>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div className="bg-slate-950 p-3 rounded border border-slate-800">
+              <h6 className="text-white font-bold mb-1 text-sm">Soap Bubble Ninjutsu</h6>
+              <p className="text-sm text-slate-400">Create explosive, drowning, or blinding bubbles. Requires bubble pipe. Bubbles can trap, transport, or explode (e.g. Explosive Bubble - 4 CU, Drowning - 2 CU).</p>
+            </div>
+            <div className="bg-slate-950 p-3 rounded border border-slate-800">
+              <h6 className="text-white font-bold mb-1 text-sm">Leech Gap / Wolf Decay</h6>
+              <p className="text-sm text-slate-400">Extreme alkaline liquid/gas. Burns skin, weakens steel/earth/chakra armor over 4 turns. Neutralized by high-pressure water or wind.</p>
+            </div>
+          </div>
+        </BeastProfile>
+
+        {/* Chomei */}
+        <BeastProfile name="Chōmei" tails="7" title="The Seven Tails">
+          <p className="text-sm text-slate-300 mb-3">Cheerful, upbeat, optimistic. Giant armored rhinoceros beetle.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Toxin Release KKG.</li>
+              <li><strong>60%:</strong> Immunity to own toxins. Can create a custom poison type (requires staff approval). Capable of flight.</li>
+              <li><strong>Initial Form Aura:</strong> Glowing insect exoskeleton. Drains 1 CU per turn on physical contact. Aesthetic: Feathery hair, iridescent patterns, prismatic eyes, faint chakra wings.</li>
+            </ul>
+          </div>
+          <div className="bg-slate-950 p-3 rounded border border-slate-800">
+            <h6 className="text-white font-bold mb-1 text-sm">Toxin Release (KKG)</h6>
+            <p className="text-sm text-slate-400">Create toxic powders. Choose from Poison Type A, C, or E on cast. Weakness: Target cannot be affected by multiple toxins at once. Very weak to Wind Release dispersion.</p>
+          </div>
+        </BeastProfile>
+
+        {/* Gyuki */}
+        <BeastProfile name="Gyūki" tails="8" title="The Eight Tails">
+          <p className="text-sm text-slate-300 mb-3">Tough, serious, analytical. Enormous ushi-oni (octopus-bull hybrid).</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Ink Release KKG.</li>
+              <li><strong>60%:</strong> Human Tank: Resilient to blunt force, cutting, exhaustion. Increased pain tolerance. +1 to Strength (Durability only, can exceed S-Rank cap).</li>
+              <li><strong>Initial Form Aura:</strong> Immense traction/stability (human anchor). Prevents knockbacks. Aesthetic: Muscular build, gray skin tone, tentacle patterns.</li>
+            </ul>
+          </div>
+          <div className="bg-slate-950 p-3 rounded border border-slate-800">
+            <h6 className="text-white font-bold mb-1 text-sm">Ink Release (KKG)</h6>
+            <p className="text-sm text-slate-400">Generate chakra-reactive ink. Blind, trap, or form seals. Resistant to water dilution. Weakness: Fire attacks burn/evaporate it, Wind attacks disperse constructs.</p>
+          </div>
+        </BeastProfile>
+
+        {/* Kurama Yang */}
+        <BeastProfile name="Kurama (Yang)" tails="9" title="The Nine Tails">
+          <p className="text-sm text-slate-300 mb-3">Clever, snarky, proud. Massive red-orange fox. More manipulative than Yin.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> Great Roar Jutsu.</li>
+              <li><strong>40%:</strong> Nine-Tails Chakra Mode (NTCM).</li>
+              <li><strong>60%:</strong> Negative Emotions Sensing.</li>
+              <li><strong>100%:</strong> Kurama Chakra Mode (KCM).</li>
+              <li><strong>Initial Form Aura:</strong> Pulsating shockwaves with attacks (+5m reach). Deflects projectiles. Aesthetic: Red spiky hair, claws, crimson slitted eyes.</li>
+            </ul>
+          </div>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div className="bg-slate-950 p-3 rounded border border-slate-800">
+              <h6 className="text-white font-bold mb-1 text-sm">Negative Emotions Sensing</h6>
+              <p className="text-sm text-slate-400">Sense hatred and killing intent regardless of distance or chakra masking.</p>
+            </div>
+            <div className="bg-slate-950 p-3 rounded border border-slate-800">
+              <h6 className="text-white font-bold mb-1 text-sm">Great Roar</h6>
+              <p className="text-sm text-slate-400">Concussive shockwave. Range/power scales with form (Base: 5m, Full TB: 150m). Can be radial or directional.</p>
+            </div>
+          </div>
+        </BeastProfile>
+
+        {/* Kurama Yin */}
+        <BeastProfile name="Kurama (Yin)" tails="9" title="The Nine Tails">
+          <p className="text-sm text-slate-300 mb-3">Clever, snarky, proud. Massive completely black fox.</p>
+          <div className="bg-slate-950 p-3 rounded mb-4 border border-slate-800">
+            <h6 className="text-cyan-400 font-bold mb-1 text-sm">Friendship Unlocks</h6>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>30%:</strong> First 3 Masked Beasts (1 at a time).</li>
+              <li><strong>40%:</strong> Nine-Tails Chakra Mode (NTCM).</li>
+              <li><strong>50%:</strong> First 6 Masked Beasts (3 at a time).</li>
+              <li><strong>60%:</strong> All Masks at 100% efficiency.</li>
+              <li><strong>70%:</strong> All 9 Masked Beasts (6 at a time).</li>
+              <li><strong>90%:</strong> All 9 Masks at once.</li>
+              <li><strong>100%:</strong> Kurama Chakra Mode (KCM).</li>
+            </ul>
+          </div>
+          <div className="bg-slate-950 p-4 rounded border border-slate-800 text-sm text-slate-300">
+            <h6 className="text-white font-bold mb-2">Masked Beasts Mechanics</h6>
+            <p className="mb-2">4 CU per summon. Share host stats unless stated. Takes 2 A/S-rank hits to defeat (B-rank = 0.5 hits).</p>
+            <ul className="space-y-2 mt-2 h-40 overflow-y-auto pr-2 custom-scrollbar">
+              <li><strong>Seiryū (30%):</strong> Seahorse dragon. Takes 3 hits. +1 Str rank. Flight. Claws infuse chakra for 2 CU/turn.</li>
+              <li><strong>Byakko (30%):</strong> White tiger. +1 Spd rank. Fangs/claws infuse chakra for 2 CU/turn.</li>
+              <li><strong>Suzaku (30%):</strong> Elegant bird. Rideable. Flaps wings to launch feathers (infuse for 2 CU/feather).</li>
+              <li><strong>Genbu (50%):</strong> Tortoise. +1 Str, -1 Spd. Shell can be infused (4 CU) to resist weakness or suffer x2 hits.</li>
+              <li><strong>Kinja (50%):</strong> Golden serpent. Burrows fast. Can bind target and halt chakra usage (4 CU/turn).</li>
+              <li><strong>Tennyo (60%):</strong> Priestess. Robes bind targets up to 40ft (2 CU/turn).</li>
+              <li><strong>Shinigaki (70%):</strong> Skeleton priest. Scythe slice (C-rank, 4 CU). Can infuse nature to A-rank (+4 CU).</li>
+              <li><strong>Hokuto & Nato Sannin (70%):</strong> Can use Host's ninjutsu. Together form 20x20ft pure chakra barrier (6 CU/turn) trapping targets.</li>
+            </ul>
+          </div>
+        </BeastProfile>
+      </Section>
+
+      <Section title="Tailed Beast Pet System">
+        <p className="text-sm text-slate-300 mb-4">Unlocks for all Jinchuriki at <strong>100% Friendship</strong>. Summons a miniaturized, non-combat version of your Tailed Beast.</p>
+        <div className="bg-slate-900 p-4 rounded border border-slate-800">
+          <strong className="text-white block mb-2">Rules & Restrictions:</strong>
+          <ul className="list-disc list-inside text-sm text-slate-400 space-y-1">
+            <li><strong>No Combat Use:</strong> They disappear the moment a fight begins.</li>
+            <li>Cannot attack, interfere, or cause environmental damage.</li>
+            <li>Can also be manifested partially outside the body as a chakra shroud (like Kurama and Naruto), but same limits apply.</li>
+            <li className="text-red-400 font-medium"><strong>Abuse Penalty:</strong> Immediate removal of access and friendship drop (down to 10% depending on severity).</li>
+          </ul>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+// --- HELPER COMPONENT FOR BEASTS ---
+function BeastProfile({ name, tails, title, children }) {
+  return (
+    <details className="group bg-slate-900/60 border border-slate-700 rounded-lg mb-4 overflow-hidden shadow-lg">
+      <summary className="p-4 bg-slate-900 cursor-pointer font-bold text-lg text-white flex justify-between items-center list-none hover:bg-slate-800 transition-colors">
+        <div className="flex items-center gap-3">
+          <span className="bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-1 rounded text-xs uppercase tracking-widest">{tails} Tails</span>
+          <span>{name} {title && <span className="text-slate-400 font-normal text-sm ml-2">| {title}</span>}</span>
+        </div>
+        <span className="text-cyan-500 group-open:rotate-180 transition-transform">▼</span>
+      </summary>
+      <div className="p-5 border-t border-slate-800 bg-slate-900/40">
+        {children}
+      </div>
+    </details>
+  );
+}
+
+function BattleModesView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Battle Modes System <Zap className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules covering transformations, physical alterations, and temporary combat boosts.</p>
+      </header>
+
+      <Section title="Types of Battle Modes">
+        <p className="mb-4">There are three types of Battle Modes ranging from "weakest" to strongest in terms of bonuses. None of these will raise your stats above S Rank OR 100% unless specified.</p>
+        
+        <div className="space-y-4">
+          <div className="bg-slate-900 p-5 rounded border-l-4 border-slate-500">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-white font-bold text-lg">Secondary Battle Modes</h4>
+              <span className="text-xs uppercase tracking-wider text-slate-400 bg-slate-800 px-2 py-1 rounded">Limit: 2 per character</span>
+            </div>
+            <p className="text-sm text-slate-300">This category includes all Jutsu that somehow alter the user's body or add the ability to use other Jutsu. Learning this is like learning a <strong>C-Rank</strong> technique and should be balanced as such.</p>
+          </div>
+
+          <div className="bg-slate-900 p-5 rounded border-l-4 border-blue-500">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-white font-bold text-lg">Minor Battle Modes</h4>
+              <span className="text-xs uppercase tracking-wider text-slate-400 bg-slate-800 px-2 py-1 rounded">Limit: 1 per character</span>
+            </div>
+            <p className="text-sm text-slate-300 mb-2">This category includes all Jutsu that enhance the user's characteristics with a maximum of <strong>+1 to one statistic OR +20% to one skill</strong>.</p>
+            <p className="text-sm text-slate-400 italic">Learning this is like learning a <strong>B-Rank</strong> technique and should be balanced as such.</p>
+          </div>
+
+          <div className="bg-slate-900 p-5 rounded border-l-4 border-cyan-500">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-white font-bold text-lg">Major Battle Modes</h4>
+              <span className="text-xs uppercase tracking-wider text-slate-400 bg-slate-800 px-2 py-1 rounded">Limit: 1 per character</span>
+            </div>
+            <p className="text-sm text-slate-300 mb-2">The user will gain <strong>+1 in one statistic AND +20% to one skill</strong>.</p>
+            <p className="text-sm text-slate-400 italic">Learning this is like learning an <strong>A-Rank</strong> technique and should be balanced as such.</p>
+          </div>
+        </div>
+
+        <div className="mt-6 bg-red-950/30 border border-red-900/50 p-4 rounded-lg">
+          <strong className="text-red-400 block mb-1">Stacking Rule</strong>
+          <p className="text-sm text-red-200/80">One cannot have more than one battle mode that grants stat or skill bonuses active at the same time unless clearly specified.</p>
+        </div>
+      </Section>
+
+      <Section title="Awakening & Major Mode Skills">
+        <p className="mb-4">"Awakening" is a unique skill that applies <strong>ONLY to Major Battle Modes</strong> (Clan or Custom). Any other kind of battle mode cannot be awakened.</p>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-slate-900/60 p-5 rounded border border-slate-800">
+            <h4 className="text-cyan-400 font-bold mb-2 border-b border-slate-800 pb-2">How Awakening Works</h4>
+            <p className="text-sm text-slate-300 mb-2">It ranges from 10% to 100%. Once a Major Battle Mode is acquired, the OC obtains a 10% initial boost.</p>
+            <p className="text-sm text-slate-300 mb-2">From there, they can enhance it by 10% at intervals (20, 30, 40... up to 100%) by training in it like any other skill.</p>
+            <p className="text-sm text-cyan-300 font-medium">Once reaching 100%, the Battle mode gains another +1 to a statistic, taking it to the next level.</p>
+          </div>
+
+          <div className="bg-slate-900/60 p-5 rounded border border-slate-800">
+            <h4 className="text-cyan-400 font-bold mb-2 border-b border-slate-800 pb-2">Major Mode Free Jutsu</h4>
+            <p className="text-sm text-slate-300 mb-2">To get these, you need <strong>100%</strong> in the awakening category. You gain two "special" jutsu that do not count against your jutsu list limit.</p>
+            <p className="text-sm text-slate-300 mb-2">Max rank is based on OC rank (e.g., Genin max B-rank, Jonin max S-rank). A-rank and above will be strictly reviewed. These cannot be changed once approved.</p>
+            <p className="text-sm text-slate-500 italic mt-2">For upgrades, follow the Jinchuriki guidelines.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Exceptions & Canon Examples">
+        <div className="bg-slate-900 p-4 rounded mb-6">
+          <h4 className="text-white font-bold mb-2 text-sm uppercase tracking-wider text-slate-400">Unique Exceptions</h4>
+          <p className="text-sm text-slate-300">The following have their own regulations, stat boosts, advantages, and disadvantages outside the standard Battle Mode rules:</p>
+          <div className="flex flex-wrap gap-2 mt-3">
+            {['Jinchuriki', 'Sage Mode', 'Curse Seal', '8 Inner Gates', 'Sharingan / MS / EMS', 'Jugo Clan', 'Tenro', 'Byakugan', 'NARP: Seven Heavens Breathing Method'].map(mode => (
+              <span key={mode} className="bg-slate-950 border border-slate-700 px-3 py-1 rounded text-cyan-400 text-xs font-medium">{mode}</span>
+            ))}
+          </div>
+        </div>
+
+        <h4 className="text-cyan-400 font-bold mb-3 border-b border-slate-800 pb-2">Canon List (Miscellaneous)</h4>
+        <div className="bg-slate-900/50 p-4 rounded border-l-4 border-slate-500">
+          <strong className="text-white block">Drunken Fist <span className="text-slate-500 text-sm font-normal">(Minor Battle Mode)</span></strong>
+          <p className="text-sm text-slate-300 mt-1">When using this Minor Battle Mode the user gains <strong>+20% to Taijutsu</strong>. It lasts for 4 turns and requires the user to drink alcohol to use it.</p>
+        </div>
+
+        <div className="mt-6 space-y-3">
+          <div className="bg-yellow-950/30 border border-yellow-900/50 p-4 rounded">
+            <strong className="text-yellow-500 block mb-1 text-sm">Mandatory Resubmission</strong>
+            <p className="text-sm text-yellow-200/80">Every battle mode needs to be resubmitted to be used, period. If used without resubmission the user suffers a warning penalty and the RP is void.</p>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 p-4 rounded">
+            <strong className="text-slate-300 block mb-1 text-sm">Removed Modes</strong>
+            <p className="text-sm text-slate-400"><strong>Overdrive</strong> and <strong>Earth Spear</strong> are no longer valid Battle Modes. They can be the basis of a Custom Jutsu (e.g. fluff effect only, or +1 spd, or +20 tai).</p>
+          </div>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function SageModeView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Sage Mode System <Leaf className="text-green-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Senjutsu discipline, natural energy blending, and heightened capabilities.</p>
+      </header>
+
+      <Section title="What is Sage Mode?">
+        <p className="mb-4">Sage Mode is a powerful transformation that occurs when a shinobi successfully blends natural energy with their own chakra. By mastering Sage Mode, a user gains enhanced physical and sensory abilities. Senjutsu chakra enhances ninjutsu and taijutsu, making techniques more potent and efficient.</p>
+        
+        <h4 className="text-green-400 font-bold mt-6 mb-2 border-b border-slate-800 pb-2">What Qualifies for Sage Mode?</h4>
+        <p className="text-sm text-slate-300 mb-3">Not everything can be turned into a Sage Mode (No Sword, Hot Sauce, or Steel Sage Modes). To qualify, a concept must meet at least one of the following criteria:</p>
+        <ul className="list-disc list-inside text-sm text-slate-300 space-y-2 ml-2">
+          <li>It must originate from or be deeply connected to the natural world.</li>
+          <li>It must be a life form or connected to living beings (exactly like Summoning Contracts, related or neutral).</li>
+        </ul>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-6">
+          <div className="bg-slate-900 p-4 rounded border border-slate-700">
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-2">Enhancing Techniques</h5>
+            <p className="text-sm text-slate-300">Infusing a jutsu with Natural Chakra makes it strike with the power of a technique <strong>one rank higher</strong> (capped at S-Rank).</p>
+            <p className="text-sm text-green-400 font-medium mt-2">Cost: Original CU Cost + (Half the original cost in NCU).</p>
+            <p className="text-xs text-slate-400 mt-2">A technique cast fully with normal CU cannot be enhanced.</p>
+          </div>
+          
+          <div className="bg-slate-900 p-4 rounded border border-slate-700">
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-2">NCU Sharing</h5>
+            <p className="text-sm text-slate-300">Can replenish Natural Chakra Units (NCU) via a living summon proficient in gathering it. (Max once per RP).</p>
+            <ul className="text-sm text-slate-400 mt-2 space-y-1">
+              <li><strong>Boss Summon:</strong> 20 NCU pool.</li>
+              <li><strong>Major Summon:</strong> 10 NCU pool.</li>
+              <li><strong>Shadow Clones:</strong> Can gather NCU and be dispersed to transfer it (Cannot be done while user is actively in Sage Mode).</li>
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Limits & Rank Requirements">
+        <div className="space-y-4">
+          <div className="bg-red-950/30 border border-red-900/50 p-4 rounded-lg">
+            <h5 className="text-red-400 font-bold mb-2">Strict Restrictions</h5>
+            <ul className="list-disc list-inside text-sm text-red-200/80 space-y-1">
+              <li><strong>No NCU Regen:</strong> Cannot replenish NCU while inside Imperfect or Perfect Sage Mode. Ends when depleted.</li>
+              <li><strong>No CU Substitute:</strong> Cannot use normal chakra to replace Natural Chakra to sustain the form.</li>
+              <li><strong>No Simultaneous Modes:</strong> Cannot be combined with other Battle Modes (unless Secondary and non-interfering).</li>
+              <li><strong>No Major Clashes:</strong> Cannot be a Jinchūriki or have a Cursed Seal / Eight Gates.</li>
+            </ul>
+          </div>
+
+          <div className="bg-slate-900 p-4 rounded border border-slate-800">
+            <h5 className="font-bold text-green-400 mb-2">Progression Caps by Rank</h5>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-300">
+              <p><strong className="text-white">Genin:</strong> Cannot enter Sage Mode. Can train up to 90% in basic phase.</p>
+              <p><strong className="text-white">Chūnin:</strong> Capped at 50% mastery in Imperfect Sage Mode.</p>
+              <p><strong className="text-white">Special Jōnin:</strong> Can enter Perfect SM, capped at 80% (Has cooldown limits).</p>
+              <p><strong className="text-white">Jōnin:</strong> Can fully master Sage Mode (100%).</p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Stage 1: In Training (10% - 100%)">
+        <p className="text-sm text-slate-300">At this stage, the user is learning to sense and absorb natural energy. Balance is unstable. Access to Sage Mode is completely unavailable. You must progress from 10% to 100% mastery. Only upon reaching 100% completion do you gain access to Imperfect Sage Mode. No direct enhancements are granted here.</p>
+      </Section>
+
+      <Section title="Stage 2: Imperfect Sage Mode (10% - 50%)">
+        <p className="text-sm text-slate-300 mb-4">Upon unlocking this, mastery resets to 10%. The user has basic ability to absorb NCU, but control is incomplete (unstable form, partial physical changes). The user must remain <strong>completely still</strong> to gather energy.</p>
+        
+        <ul className="text-sm text-slate-300 space-y-2 mb-4 bg-slate-900 p-4 rounded border border-slate-800">
+          <li><strong>Activation Cost:</strong> Spends 4 CU to begin gathering.</li>
+          <li><strong>Charging Phase:</strong> Absorbs NCU per turn based on Chakra Control Rank.</li>
+          <li><strong>Completion:</strong> Once the NCU bar is full, the user enters Imperfect SM.</li>
+          <li className="text-green-400 font-medium"><strong>Bonus:</strong> In this form, Jutsu take half the CU cost and half the NCU cost.</li>
+        </ul>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-slate-300 border border-slate-700 rounded-lg">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">Rank</th>
+                <th className="px-4 py-3 font-medium text-green-400">Max NCU Pool</th>
+                <th className="px-4 py-3 font-medium">Absorption Rate</th>
+                <th className="px-4 py-3 font-medium text-red-400">Consumption Rate</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/50 bg-slate-900/50">
+              {[
+                { r: 'E', max: 9, abs: 3, cons: 8 },
+                { r: 'D', max: 12, abs: 5, cons: 6 },
+                { r: 'C', max: 15, abs: 5, cons: 6 },
+                { r: 'B', max: 18, abs: 7, cons: 4 },
+                { r: 'A', max: 21, abs: 7, cons: 4 },
+                { r: 'S', max: 25, abs: 10, cons: 2 },
+              ].map(row => (
+                <tr key={row.r} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-4 py-2 font-bold text-white">{row.r}</td>
+                  <td className="px-4 py-2">{row.max}</td>
+                  <td className="px-4 py-2">{row.abs}/turn</td>
+                  <td className="px-4 py-2">{row.cons}/turn</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section title="Stage 3: Perfect Sage Mode (60% - 100%)">
+        <p className="text-sm text-slate-300 mb-4">Accessible once the user reaches 60% mastery. Control is stable and efficient. The user is <strong>no longer required to remain completely still</strong> (can move and perform simple actions while gathering).</p>
+
+        <ul className="text-sm text-slate-300 space-y-2 mb-4 bg-slate-900 p-4 rounded border border-slate-800">
+          <li><strong>Activation Cost:</strong> Spends 2 CU to begin gathering.</li>
+          <li><strong>Completion:</strong> Once the NCU bar is full, the user can choose to enter Sage Mode whenever they want, as long as they have enough NCU.</li>
+          <li className="text-green-400 font-medium"><strong>Jutsu Casting:</strong> ALL jutsu cast in Perfect SM use NCU.</li>
+          <li className="text-red-400 font-medium text-xs"><strong>Cooldowns:</strong> B-Rank jutsu = 1 turn wait before another B-rank. A/S-Rank = 2 turns wait. (Lower ranked techniques cast normally).</li>
+        </ul>
+
+        <div className="overflow-x-auto grid md:grid-cols-2 gap-4">
+          <table className="w-full text-left text-sm text-slate-300 border border-slate-700 rounded-lg">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">Rank</th>
+                <th className="px-4 py-3 font-medium text-green-400">Max NCU</th>
+                <th className="px-4 py-3 font-medium">Abs Rate</th>
+                <th className="px-4 py-3 font-medium text-red-400">Cons. Rate</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/50 bg-slate-900/50">
+              {[
+                { r: 'E', max: 12, abs: 5, cons: 6 },
+                { r: 'D', max: 15, abs: 7, cons: 6 },
+                { r: 'C', max: 18, abs: 7, cons: 4 },
+                { r: 'B', max: 21, abs: 9, cons: 4 },
+                { r: 'A', max: 24, abs: 9, cons: 2 },
+                { r: 'S', max: 30, abs: 15, cons: 1 },
+              ].map(row => (
+                <tr key={row.r} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-4 py-2 font-bold text-white">{row.r}</td>
+                  <td className="px-4 py-2">{row.max}</td>
+                  <td className="px-4 py-2">{row.abs}</td>
+                  <td className="px-4 py-2">{row.cons}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <table className="w-full text-left text-sm text-slate-300 border border-slate-700 rounded-lg h-fit">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">Mastery %</th>
+                <th className="px-4 py-3 font-medium text-yellow-500">Cool Down</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/50 bg-slate-900/50">
+              {[
+                { m: '60%', cd: '6 Turns' },
+                { m: '70%', cd: '5 Turns' },
+                { m: '80%', cd: '4 Turns' },
+                { m: '90%', cd: '3 Turns' },
+                { m: '100%', cd: '2 Turns' },
+              ].map(row => (
+                <tr key={row.m} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-4 py-2 font-bold text-white">{row.m}</td>
+                  <td className="px-4 py-2 text-yellow-400">{row.cd}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function CurseSealView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Curse Seal System <Hexagon className="text-purple-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Forbidden artificial evolution through Fuinjutsu and Senjutsu.</p>
+      </header>
+
+      <Section title="Obtainment & Creation">
+        <p className="mb-4 text-sm text-slate-300">A Cursed Seal is a powerful and forbidden technique that alters the chakra network to grant a significant boost in power at the cost of potential drawbacks and mutations.</p>
+        
+        <div className="bg-slate-900 p-5 rounded border-l-4 border-purple-500 space-y-3">
+          <h4 className="text-white font-bold">How to Create and Apply</h4>
+          <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
+            <li><strong>Study:</strong> Creator must study a subject with a natural ability to absorb/transform natural energy (like Jugo Clan) for 1 to 6+ RPs.</li>
+            <li><strong>Skill:</strong> Creator must have at least <strong>60% Medical skill</strong>.</li>
+            <li><strong>Application:</strong> You CANNOT apply it to yourself. You can place it on others with OOC permission. Must be done IRP (Cannot start with it).</li>
+            <li><strong>Instability:</strong> Inherently unstable. New users suffer physical strain or loss of control. If left unused, it goes dormant (takes 5+ RPs to reactivate).</li>
+          </ul>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-6">
+          <div className="bg-slate-900 p-4 rounded border border-slate-700">
+            <h5 className="font-bold text-purple-400 text-sm uppercase tracking-wider mb-2">Creator Bonuses</h5>
+            <p className="text-sm text-slate-300 mb-2">The marked individual CANNOT directly attack the creator unless explicitly allowed.</p>
+            <ul className="text-sm text-slate-400 space-y-1">
+              <li><strong>Stage 1 Active:</strong> Creator gains +5 Chakra.</li>
+              <li><strong>Stage 2 Active:</strong> Increases to +10 Chakra total.</li>
+              <li><strong>Removal:</strong> Bonuses lost if seal is removed.</li>
+            </ul>
+            <p className="text-xs text-slate-500 mt-2">Applies per individual marked.</p>
+          </div>
+          
+          <div className="bg-slate-900 p-4 rounded border border-slate-700">
+            <h5 className="font-bold text-red-400 text-sm uppercase tracking-wider mb-2">Limits & Restrictions</h5>
+            <ul className="text-sm text-slate-300 space-y-2">
+              <li><strong>Exclusive NCU:</strong> In mode, cannot use normal CU. All tech uses NCU.</li>
+              <li><strong>Senjutsu Boost:</strong> All jutsu are auto-enhanced (+1 rank, S-rank cap).</li>
+              <li><strong>Cooldowns:</strong> B-rank jutsu = 1 turn CD. A/S-rank jutsu = 2 turns CD.</li>
+              <li><strong>No Outside Senjutsu:</strong> Cannot gather nature energy outside the seal form.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-4 bg-red-950/30 border border-red-900/50 p-4 rounded-lg text-sm text-red-200/80">
+          <strong>Incompatibilities & Caps:</strong> Cannot be a Jinchūriki, Sage Mode user, or have Eight Gates. 
+          Genin/Chūnin capped at 50% mastery. Special Jōnin capped at 80% (Stage 2). Jōnin can reach 100%.
+        </div>
+      </Section>
+
+      <Section title="Stage 1: Initial Transformation (10% - 50%)">
+        <p className="text-sm text-slate-300 mb-4">Upon application, you gain "Curse Mark Stage One 10%". Tattoos spread across the body when active. The seal passively absorbs natural energy, gradually filling the NCU pool.</p>
+
+        <div className="bg-slate-900/50 p-4 rounded border border-slate-800 mb-4">
+          <strong className="text-white block mb-1 text-sm">Automatic Transformation</strong>
+          <p className="text-sm text-slate-300">Unlike other modes, this does not drain NCU per turn. Once the NCU pool is full, the transformation triggers <strong>automatically</strong>. The user has no control over when they transform in Stage 1.</p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-slate-300 border border-slate-700 rounded-lg">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">CS %</th>
+                <th className="px-4 py-3 font-medium text-purple-400">Max NCU</th>
+                <th className="px-4 py-3 font-medium">Absorption Rate</th>
+                <th className="px-4 py-3 font-medium text-yellow-500">Cool Down</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/50 bg-slate-900/50">
+              {[
+                { p: '10%', max: 12, abs: 5, cd: '8 Turns' },
+                { p: '20%', max: 15, abs: 5, cd: '6 Turns' },
+                { p: '30%', max: 18, abs: 7, cd: '5 Turns' },
+                { p: '40%', max: 21, abs: 7, cd: '4 Turns' },
+                { p: '50%', max: 25, abs: 10, cd: '3 Turns' },
+              ].map(row => (
+                <tr key={row.p} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-4 py-2 font-bold text-white">{row.p}</td>
+                  <td className="px-4 py-2">{row.max}</td>
+                  <td className="px-4 py-2">{row.abs}</td>
+                  <td className="px-4 py-2 text-yellow-400">{row.cd}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section title="Stage 2: Monstrous Form (60% - 100%)">
+        <p className="text-sm text-slate-300 mb-4">Unlocks drastic physical mutations (inhuman traits), massive strength/speed boosts, but causes heavy mental and physical strain.</p>
+
+        <div className="bg-red-950/40 p-4 rounded border border-red-800 mb-6">
+          <strong className="text-red-400 block mb-1">The D20 Death Roll</strong>
+          <p className="text-sm text-red-200/80">To unlock Stage 2, you require an IRP training session with the original giver. The user must roll a D20, choosing high (10+) or low (9 or lower) before rolling. <strong>If they fail, their body is unable to withstand the transformation, and they die permanently.</strong></p>
+        </div>
+
+        <div className="bg-slate-900/50 p-4 rounded border border-slate-800 mb-4">
+          <strong className="text-white block mb-1 text-sm">Controlled Transformation</strong>
+          <p className="text-sm text-slate-300">In Stage Two, the transformation is no longer automatic. The user can choose when to activate Stage Two once the NCU reaches maximum. They can also choose to only enter Stage One if desired.</p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-slate-300 border border-slate-700 rounded-lg">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">CS %</th>
+                <th className="px-4 py-3 font-medium text-purple-400">Max NCU</th>
+                <th className="px-4 py-3 font-medium">Absorption Rate</th>
+                <th className="px-4 py-3 font-medium text-yellow-500">Cool Down</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/50 bg-slate-900/50">
+              {[
+                { p: '60%', max: 15, abs: 7, cd: '6 Turns' },
+                { p: '70%', max: 18, abs: 7, cd: '6 Turns' },
+                { p: '80%', max: 21, abs: 9, cd: '4 Turns' },
+                { p: '90%', max: 24, abs: 9, cd: '3 Turns' },
+                { p: '100%', max: 30, abs: 15, cd: '2 Turns' },
+              ].map(row => (
+                <tr key={row.p} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-4 py-2 font-bold text-white">{row.p}</td>
+                  <td className="px-4 py-2">{row.max}</td>
+                  <td className="px-4 py-2">{row.abs}</td>
+                  <td className="px-4 py-2 text-yellow-400">{row.cd}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function RankSystemView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Shinobi Rank System <Award className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Below is the section you will use when determining your shinobi rank, the stat and skill levels they start out with, the minimum starting age for those ranks, and more information.</p>
+      </header>
+
+      <Section title="Character Creation & Ranks">
+        <p className="mb-4">When you create your character, one of the first things you will have to figure out is what rank they are starting at.</p>
+        <div className="space-y-3">
+          <div className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-cyan-500">
+            <h4 className="text-white font-bold mb-1">First Characters</h4>
+            <p className="text-sm text-slate-300">Have the option to start as the following: <strong className="text-cyan-400">Genin | Chunin | Special Jounin | Jounin</strong>.</p>
+          </div>
+          <div className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-cyan-500">
+            <h4 className="text-white font-bold mb-1">Second Characters</h4>
+            <p className="text-sm text-slate-300">Must start as a <strong className="text-cyan-400">Genin</strong> unless the following applies:</p>
+            <ul className="list-disc list-inside mt-2 text-sm text-slate-400 space-y-1 ml-2">
+              <li>Your first character was already a Genin, in which case you follow the same rules as your first character allowances.</li>
+              <li>There is a high level of Genin, and staff approves of you starting as Chunin instead.</li>
+            </ul>
+          </div>
+          <div className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-cyan-500">
+            <h4 className="text-white font-bold mb-1">Third Characters (Or Higher)</h4>
+            <p className="text-sm text-slate-300">When they are allowed, they do not yet have a determined starting range. That will be discussed when that time comes.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Ranking Up & Limits">
+        <p className="mb-4">What does your rank grant you? Each rank has a set limit for their starting Stats, starting skills, allowed number of techniques, rank of techniques allowed, and a minimum starting age. You can find info on all those below.</p>
+        
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2 border-b border-slate-800 pb-2">Ranking Up</h4>
+        <p className="text-slate-300 text-sm">When you rank up, you do <strong>not</strong> automatically move your stats, skills, techniques, etc to the next rank's starting levels. Your character sheet remains exactly the same and your shinobi rank simply increases.</p>
+        <p className="text-slate-300 text-sm mt-2">When this happens, your max out stats/skills/technique slots increase to the next rank's max outs.</p>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-6">
+          <div className="bg-slate-900 p-4 rounded border border-slate-700">
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-2">Nature Limits</h5>
+            <p className="text-sm text-slate-400">Your KKG Nature / Hiden Art / Jinchuriki gained nature do <strong>not</strong> count towards the nature limits posted below.</p>
+          </div>
+          <div className="bg-slate-900 p-4 rounded border border-slate-700">
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-2">Age Requirements</h5>
+            <p className="text-sm text-slate-400">You do not need to reach the minimum starting age of any rank to be promoted to that rank in character. That age requirement is <strong>only for characters during creation</strong>, so that we don't end up with 8 year old ANBU, or other prodigy shinobi that are too young.</p>
+          </div>
+          <div className="bg-slate-900 p-4 rounded border border-slate-700 md:col-span-2">
+            <h5 className="font-bold text-red-400 text-sm uppercase tracking-wider mb-2">Academy Students</h5>
+            <p className="text-sm text-slate-400">Being an Academy student is <strong>not allowed</strong> within the server. In the past, we have had many people uncomfortable with participating in roleplays with characters that young.</p>
+          </div>
+        </div>
+      </Section>
+
+      <div className="space-y-8">
+        <h3 className="text-2xl font-bold text-white border-b border-slate-800 pb-2 flex items-center gap-2">
+          <span className="w-2 h-6 bg-cyan-500 rounded-full inline-block"></span>
+          Standard Ranks
+        </h3>
+
+        <RankCard 
+          title="Genin" 
+          samurai="Gokenin" 
+          age="11 years old" 
+          desc="Genin are the lowest rank of shinobi, and is the rank acquired after graduating your village's academy. If your character is the starting age listed below, then they are a fresh genin, who just graduated the academy no more than a few months ago."
+          startStats="All at D or F"
+          startSkills="All starting at 20% or lower"
+          maxStats="2 at C rank, the other 2 remain at D"
+          maxSkills="3 skills at 40%, the rest remain at 20% or lower"
+          startTechs={<><strong>1 Nature | 5 Jutsu</strong><br/><span className="text-slate-400 text-xs">--1 B rank, 4 C rank or below</span></>}
+          maxTechs={<><strong>2 Natures | 10 Jutsu</strong><br/><span className="text-slate-400 text-xs">--2 B rank, 8 C rank or below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          rankUp="Chunin Exams. Kage or staff approval for a rank up if exams are too far out, usually done via an IC test given by the Kage."
+        />
+
+        <RankCard 
+          title="Chunin" 
+          samurai="Goshi" 
+          age="14 years old" 
+          desc="Chunin is the rank above Genin. These are shinobi are not quite the weakest but are nowhere near the strongest either. This rank is usually obtained through passing the chunin exams, but other methods also exist. If your character is the minimum starting age posted below, they are a fresh chunin who was just advanced within the last few months."
+          startStats="2 at C rank the rest at D or F rank"
+          startSkills="3 at 40% with the rest at 20% or lower"
+          maxStats="2 at B rank and 2 at C rank or lower"
+          maxSkills="3 at 50% with the rest 40% or lower"
+          startTechs={<><strong>2 Natures | 10 Jutsu</strong><br/><span className="text-slate-400 text-xs">--2 B rank, 8 C rank or below</span></>}
+          maxTechs={<><strong>2 Natures | 15 Jutsu</strong><br/><span className="text-slate-400 text-xs">--1 A rank, 11 B Rank or Below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          rankUp="Kage or staff approval for rank up, determined by activity, IC accomplishments, and potentially a test usually done via an IC test by the Kage."
+        />
+
+        <RankCard 
+          title="Special Jounin" 
+          samurai="Moto" 
+          age="16 years old" 
+          desc="This rank is after Chunin and below Jounin. In canon lore, this rank is not a requirement before becoming jounin, however within the server it is. This rank are those that are not quite Jounin level yet, but show one or a few skills that near Jounin level. They often specialize in a specific technique type. If your character is the minimum starting age upon creation, they are a freshly promoted Special Jounin who was promoted sometime in the last few months."
+          startStats="2 at B with the rest at C or lower"
+          startSkills="3 at 50% with the rest at 40% or lower"
+          maxStats="2 at A with the rest at B or lower"
+          maxSkills="3 at 60% with the rest at 50% or lower"
+          startTechs={<><strong>2 Natures | 15 Jutsu</strong><br/><span className="text-slate-400 text-xs">--1 A rank, 11 B Rank or below</span></>}
+          maxTechs={<><strong>3 Natures | 20 Jutsu</strong><br/><span className="text-slate-400 text-xs">--1 S rank, 3 A rank, the rest B rank or below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          rankUp="Kage/Staff approval for rank, determined by activity, IC accomplishments, and potentially a test usually done via an IC test by the Kage."
+        />
+
+        <RankCard 
+          title="Jonin & ANBU" 
+          samurai="Hatamoto (Jonin) | Shimin (ANBU)" 
+          age="18 years old" 
+          desc="Jonin is the rank above Special Jonin that is given to exceptional shinobi by their Kage. This is the pinnacle of most shinobi lives. ANBU is a Jonin level rank with a secondary job that is SECRET. Only the Kage should know you are ANBU. You may start as an Anbu, but if you are being promoted from special jounin, you will most likely be placed as a jounin until proper anbu training is done. Anbu work fully as Jonin too, however have access to missions otherwise unavailable to regular Jonin."
+          startStats="2 at A rank with the rest at B or lower"
+          startSkills="3 at 60%, with the rest at 50% or lower"
+          maxStats="2 at S rank, the rest at A or lower"
+          maxSkills="3 at 80%, with the rest at 60% or lower"
+          startTechs={<><strong>3 Natures | 20 Jutsu</strong><br/><span className="text-slate-400 text-xs">--1 S rank, rest A rank or below</span></>}
+          maxTechs={<><strong>25 Jutsu</strong><br/><span className="text-slate-400 text-xs">--2 S rank, the rest A rank or below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          rankUp={<>The only way to rank up from Jounin the following:<br/>- Gain the Sannin Rank [requires a lot of in character work]<br/>- Become a Kage [Usually through a IC/oc vote if the current kage steps down or died]<br/>- Become a minor village leader [requires the process of creating a minor village]</>}
+        />
+        
+        <h3 className="text-2xl font-bold text-white border-b border-slate-800 pb-2 flex items-center gap-2 mt-12">
+          <span className="w-2 h-6 bg-yellow-500 rounded-full inline-block"></span>
+          Leadership & Legendary Ranks
+        </h3>
+        <p className="text-slate-400 text-sm">Note: Kages can only be NPCs at start, and Sannins / Minor village leaders ranks must be achieved IC.</p>
+
+        <RankCard 
+          title="Kage" 
+          age="18 years old" 
+          desc="The absolute leader of a major hidden village. Note: The minimum starting age does not matter if an already created character is reaching that rank in character."
+          startStats="2 at S rank, the rest at A or lower"
+          startSkills="3 at 80%, the rest at 60% or lower"
+          maxStats="3 at S rank, the rest at A or lower"
+          maxSkills="3 at 100%, the rest at 80% or lower"
+          startTechs={<><strong>4 Natures | 25 Jutsu</strong><br/><span className="text-slate-400 text-xs">--2 S rank, 7 A rank, 8 B rank, 14 C rank or below</span></>}
+          maxTechs={<><strong>30 Jutsu</strong><br/><span className="text-slate-400 text-xs">--4 S rank, 10 A rank, 10 B rank, 16 C rank or below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          retirementWarning={true}
+        />
+
+        <RankCard 
+          title="Minor Village Leader" 
+          age="18 years old" 
+          desc="The leader of a minor hidden village. Note: The minimum starting age does not matter if an already created character is reaching that rank in character."
+          startStats="2 at S rank, the rest at A or lower"
+          startSkills="3 at 80%, the rest at 60% or lower"
+          maxStats="3 at S rank, the rest at A or lower"
+          maxSkills="2 at 100%, the rest at 80% or lower"
+          startTechs={<><strong>3 Natures | 25 Jutsu</strong><br/><span className="text-slate-400 text-xs">--2 S rank, 7 A rank, 8 B rank, 14 C rank or below</span></>}
+          maxTechs={<><strong>30 Jutsu</strong><br/><span className="text-slate-400 text-xs">--3 S rank, 10 A rank, 10 B rank, 16 C rank or below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          retirementWarning={true}
+        />
+
+        <RankCard 
+          title="Sannin" 
+          age="N/A" 
+          desc="This is a prestigious rank and is not earned easily. Do not attempt to “speed run” to Sannin, it will end poorly. NOTE: You CAN NOT START as a Sannin."
+          startStats="N/A (Achieved IC)"
+          startSkills="N/A (Achieved IC)"
+          maxStats="3 at S rank, the rest at A"
+          maxSkills="2 at 100% the rest at 80% or lower"
+          startTechs="N/A"
+          maxTechs={<><strong>30 Jutsu</strong><br/><span className="text-slate-400 text-xs">--3 S rank, 10 A rank, 10 B rank, 16 C rank or below</span><br/><span className="text-cyan-500/80 text-xs italic mt-1 block">[Meaning you can learn 5 more IRP/IC]</span></>}
+          sanninRequirements={true}
+        />
+
+      </div>
+    </div>
+  );
+}
+
+function ChakraSystemView() {
+  const [level, setLevel] = useState('C');
+  const [control, setControl] = useState('D');
+
+  const BASE_CU = 5;
+  const totalCU = (rankValues[level] || 0) + (rankValues[control] || 0) + BASE_CU;
+
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+          Official Chakra System <span className="text-cyan-500">(OCS)</span>
+        </h2>
+        <p className="mt-2 text-slate-400">Below is the NARP Official chakra system, also known as OCS for short.</p>
+        <p className="mt-2 text-slate-500 text-sm">Be aware that this system provides small changes to all the other systems, a lot of clan, KKG, techniques, and basically everything else, some of which have not been implemented publicly in the server yet. It is subject to change.</p>
+      </header>
+
+      {/* Interactive Calculator Card */}
+      <div className="bg-slate-900 border border-cyan-500/30 rounded-xl p-6 shadow-[0_4px_20px_rgba(6,182,212,0.1)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+          <Calculator size={100} className="text-cyan-400" />
+        </div>
+        
+        <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+          <Activity size={20} /> CU Calculator
+        </h3>
+        
+        <div className="space-y-4 relative z-10">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">Chakra Level</label>
+              <select value={level} onChange={(e) => setLevel(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 outline-none transition-colors">
+                {Object.keys(rankValues).map(r => <option key={`lvl-${r}`} value={r}>{r} Rank ({rankValues[r]})</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">Chakra Control</label>
+              <select value={control} onChange={(e) => setControl(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 outline-none transition-colors">
+                {Object.keys(rankValues).map(r => <option key={`ctrl-${r}`} value={r}>{r} Rank ({rankValues[r]})</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-slate-950 rounded-lg border border-cyan-900 flex flex-col md:flex-row justify-between items-center">
+            <span className="text-slate-400 font-mono text-sm mb-2 md:mb-0">
+              Formula: Level ({rankValues[level]}) + Control ({rankValues[control]}) + Base ({BASE_CU})
+            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-slate-300 font-medium tracking-wide">Total Pool:</span>
+              <span className="text-3xl font-black text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]">
+                {totalCU} <span className="text-lg text-cyan-600">CU</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Section title="Overview">
+        <p>Ninja Art RP NARP has a system for the fair and balanced use of chakra based abilities in and out of combat. Below you will find multiple sections that further explain how this will work. It may seem a little complex at first, but this system is actually very simple and easy to remember.</p>
+        
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">Chakra Units / Pool (CU):</h4>
+        <p>Every character has a set number of chakra units. Your character's base chakra unit pool is based on their chakra level and chakra control, two stats found on your character sheet. Other things, such as being a Jinchuriki, activating sage mode, curse marks, or other variants may temporarily or permanently increase your characters chakra unit pool as well. For ease, Chakra Units/Pool will be labeled as CU in some instances.</p>
+
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">Determining Character Base CU:</h4>
+        <p>To determine your character's base CU value, all you have to do is add together their chakra level and chakra control stats, <strong>plus a flat base of 5 CU that all OCs receive</strong>. The value of each is based on the rank of each stat. All stats share the same numerical value.</p>
+        
+        <ul className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4 text-slate-300">
+          <li className="bg-slate-900 px-3 py-2 rounded border border-slate-800"><strong className="text-cyan-400">E Rank:</strong> 0 Units</li>
+          <li className="bg-slate-900 px-3 py-2 rounded border border-slate-800"><strong className="text-cyan-400">D Rank:</strong> 5 Units</li>
+          <li className="bg-slate-900 px-3 py-2 rounded border border-slate-800"><strong className="text-cyan-400">C Rank:</strong> 10 Units</li>
+          <li className="bg-slate-900 px-3 py-2 rounded border border-slate-800"><strong className="text-cyan-400">B Rank:</strong> 15 Units</li>
+          <li className="bg-slate-900 px-3 py-2 rounded border border-slate-800"><strong className="text-cyan-400">A Rank:</strong> 20 Units</li>
+          <li className="bg-slate-900 px-3 py-2 rounded border border-slate-800"><strong className="text-cyan-400">S Rank:</strong> 25 Units</li>
+        </ul>
+        
+        <p className="mt-4 text-slate-400">There are no ranks beyond S Rank for stats for now. Only special NPCs under strict observation of the NARP staff team can obtain levels above S Rank in any stats.</p>
+        
+        <div className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-cyan-500 mt-4">
+          <h5 className="font-bold text-white mb-1">Example:</h5>
+          <p className="text-slate-300">If your Chakra Level is C Rank and your Chakra Control is D rank, your chakra pool is 20 units.</p>
+          <p className="text-cyan-400 font-mono text-sm mt-1">(C + D + Base = 10 + 5 + 5 = 20 CU)</p>
+        </div>
+
+        <p className="mt-4 text-slate-500 text-sm italic">Note: Certain connections to different clans, a tailed beast, curse marks, sage mode, or other factors besides chakra level and control may increase this number, but this is just the most simple, base level.</p>
+      </Section>
+
+      <Section title="CU Usage & Techniques">
+        <p>A character's chakra pool will come into play any time a technique or ability that utilizes chakra is used, both in combative and non-combative roleplays.</p>
+        <p className="mt-2">When your character attempts to use a technique, the amount of CU needed to successfully make the attempt will be determined by a couple key details:</p>
+        <ol className="list-decimal list-inside mt-2 text-slate-300 space-y-2 ml-2">
+          <li>Rank of the technique in the database being used.</li>
+          <li>The technique category.</li>
+          <li>Ninjutsu, genjutsu, taijutsu, or other skills connected to the technique type.</li>
+          <li>Potential special effects active due to actions or techniques done by your character, other characters, or special environments. These are seen significantly less than other factors.</li>
+        </ol>
+
+        <h4 className="text-cyan-400 font-bold mt-8 mb-2 border-b border-slate-800 pb-2">1. Rank of Technique</h4>
+        <p>The Ranking of the technique, determined by NARP staff (not the canon ranking found sometimes on wiki pages) is the main factor for CU consumption. Using a technique of a certain rank will always cost the base amount of that rank. This means for every post the technique is utilized, the number of Chakra Units needed for that rank must be spent.</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          <div className="bg-slate-900 p-3 rounded border border-slate-800">
+            <span className="text-cyan-400 font-bold">E Rank: 1 CU</span>
+            <p className="text-xs text-slate-400 mt-1">Academy level techniques (water walking, basic clones, etc).</p>
+          </div>
+          <div className="bg-slate-900 p-3 rounded border border-slate-800">
+            <span className="text-cyan-400 font-bold">D Rank: 2 CU</span>
+          </div>
+          <div className="bg-slate-900 p-3 rounded border border-slate-800">
+            <span className="text-cyan-400 font-bold">C Rank: 4 CU</span>
+          </div>
+          <div className="bg-slate-900 p-3 rounded border border-slate-800">
+            <span className="text-cyan-400 font-bold">B Rank: 6 CU</span>
+          </div>
+          <div className="bg-slate-900 p-3 rounded border border-slate-800">
+            <span className="text-cyan-400 font-bold">A Rank: 8 CU</span>
+          </div>
+          <div className="bg-slate-900 p-3 rounded border border-slate-800">
+            <span className="text-cyan-400 font-bold">S Rank: 10 CU</span>
+          </div>
+        </div>
+
+        <h4 className="text-cyan-400 font-bold mt-8 mb-2 border-b border-slate-800 pb-2">2. Technique Categories</h4>
+        <p className="mb-4">There are three different categories that all techniques will fall into. These determine the chakra units needed per turn or per use.</p>
+        
+        <div className="space-y-4">
+          <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800">
+            <h5 className="font-bold text-white text-lg mb-2">1 Post</h5>
+            <p className="text-sm text-slate-300">The technique is released during a single post, and by the time your next post comes around in the turn order, it is completed. This does not always mean the effects can only last one turn, be them environmental or otherwise.</p>
+            <p className="text-sm text-slate-300 mt-2">Their cost is only the base amount, at the time the technique is released. Even if the technique requires a "charge up" before its release that happens during other posts, the chakra units are not used until the post that it is released.</p>
+          </div>
+
+          <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800">
+            <h5 className="font-bold text-white text-lg mb-2">Multi-Post</h5>
+            <p className="text-sm text-slate-300">These are techniques that last a designated number of turns, so long as they are not halted by various means. For these specific types, there MUST be a set turn limit in which they last.</p>
+            <p className="text-sm text-slate-300 mt-2">These types of techniques do not need constant focus, so they will last even if the user is not "keeping focus" on them. They can still be disabled by various means before the turn limit has been reached.</p>
+            <p className="text-sm text-cyan-400 mt-2 font-medium">For these, the technique will cost an amount equal to the jutsu rank times the maximum number of posts that it can last, at the time of release.</p>
+            <p className="text-sm text-slate-400 mt-1 italic">For example: If a technique lasts for 3 turns and is D rank, it will cost 6 units (2 for D rank times 3 turns) at the time of release.</p>
+            <p className="text-sm text-slate-300 mt-2">The user gets nothing back if the technique is ended before the turn limit is reached. This is the risk to reward sacrifice of this type of technique and it can not be written out via special effects. (Note that Genjutsu that fall under this category function a little differently, as stated below).</p>
+            <p className="text-sm text-white font-medium mt-2 bg-slate-800 inline-block px-2 py-1 rounded">Once a multi-post type technique is used, the user can use other techniques in future posts. They may not use any other multi-post techniques while one is already active.</p>
+          </div>
+
+          <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800">
+            <h5 className="font-bold text-white text-lg mb-2">Continuous</h5>
+            <p className="text-sm text-slate-300">This category is similar to a multi-post type, as the overall function lasts for more than 1 post. However, there are a few differences.</p>
+            <p className="text-sm text-slate-300 mt-2">This category of technique must be focused on each post. If something happens to reasonably lower their focus (including in most cases the use of other techniques) then the technique is halted.</p>
+            <p className="text-sm text-slate-300 mt-2">These techniques can last an indefinite number of turns, as long as the user has the chakra units to spend on its use. Unlike multi-post techniques, the user subtracts the chakra units needed to use it on each turn.</p>
+            <p className="text-sm text-slate-400 mt-1 italic">For example: If a continuous type D rank technique is active for 3 turns, then on each of those turns the user subtracts 2 chakra units during each turn instead of all at once upfront.</p>
+          </div>
+        </div>
+
+        <h4 className="text-cyan-400 font-bold mt-8 mb-2 border-b border-slate-800 pb-2">3. Technique Types</h4>
+        <p className="mb-4">A technique will always fall into one of the following types seen below.</p>
+        
+        <div className="space-y-4">
+          <div>
+            <h5 className="font-bold text-white">Ninjutsu</h5>
+            <p className="text-sm text-slate-300">A technique that utilizes the formation of chakra via hand seals to mold a specific chakra nature into a form. These techniques only require the use of chakra, whereas some rely on other factors to create them. An example of this would be the Fire Release: Fireball.</p>
+          </div>
+          
+          <div>
+            <h5 className="font-bold text-white">Taijutsu</h5>
+            <p className="text-sm text-slate-300">These are physical techniques often used via some form of martial arts. If a Taijutsu technique does not require any chakra added to it to use, it does not need to be listed in your character's jutsu list, nor does it cost any of your character's CU to use. The gentle fist techniques are an example of taijutsu that would use chakra, while the leaf hurricane is an example of one that would not.</p>
+          </div>
+          
+          <div>
+            <h5 className="font-bold text-white">Genjutsu</h5>
+            <p className="text-sm text-slate-300">These techniques are often complicated to utilize properly and reasonably within standard roleplay rules. They are formed via hand seals like ninjutsu are, unless the user has a unique way to create them, like the sharingan. They alter a target(s)'s sense of reality in the form of a oftentimes harmless illusion, brought about by effecting one of the 5 senses- Touch, Taste, Sight, Smell, or Sound. The most common of these are sight and sound.</p>
+            <p className="text-sm text-cyan-400 font-medium mt-2">Genjutsu follow a special rule when it comes to chakra use:</p>
+            <p className="text-sm text-slate-300 mt-1">If a Genjutsu is successful and last more than one turn, the chakra cost is applied to the target instead of the user and is taken from the target's CU every turn after the initial turn the effects are active, until the target escapes. First turn costs are paid via the user instead.</p>
+            <p className="text-sm text-slate-400 mt-1 italic">For example: If a Genjutsu lasts for 3 turns and is a D rank technique, then the user will lose 2 chakra units on the first turn, and the TARGET will lose 2 chakra units every turn after the first turn.</p>
+            <p className="text-sm text-slate-300 mt-2">The cost does not apply to the target on the turn of escape, even if the Genjutsu's max turn limit was not reached. Genjutsu that fall under the category of "multi-post" only cost the user an amount equal to its 1-post ranking, and all other costs are applied to the target(s) every turn after, until that turn limit has been reached or they escape.</p>
+          </div>
+
+          <div>
+            <h5 className="font-bold text-white">Kenjutsu</h5>
+            <p className="text-sm text-slate-300">This name is typically associated with specifically bladed weapons, however to not over complicate things, NARP applies this name to all weapon based techniques, even those of Shinobi tools such as kunai, shuriken, paper bombs, etc. These are techniques that utilize a weapon of some type in order to be performed.</p>
+            <p className="text-sm text-slate-300 mt-2">Like Taijutsu, these techniques only cost chakra units if they utilize chakra in their usage. Things like basic slashes, stabs, basic combos do not need to be listed in the character's jutsu list, and therefore cost no CU to use. Some canon and custom weapons/tools may have a CU cost to them in their description. An example would be using the special abilities of any of the seven swords of the mist, or a custom weapon's special abilities.</p>
+          </div>
+
+          <div>
+            <h5 className="font-bold text-white">Dojutsu</h5>
+            <p className="text-sm text-slate-300">These techniques are ones that utilize chakra and release via the eyes, usually found on characters that are members of clans that possess unique eye appearances and abilities that activate under various conditions, or at will. These types of techniques can only be used while the Dojutsu of a character is active, and in most cases can only be released through the eyes themselves.</p>
+            <p className="text-sm text-slate-300 mt-2">If an ability requires the Dojutsu (eyes) to be active but does not require it to be released through the eyes, then it is not a Dojutsu technique, and instead having the eyes active would be marked as a prerequisite. (e.g., Uchiha activating Mangekyou to form a Susanoo).</p>
+          </div>
+
+          <div>
+            <h5 className="font-bold text-white">Fuinjutsu</h5>
+            <p className="text-sm text-slate-300">To simplify this type of technique, this is the creation and utilization of seals. These work a little differently from other technique types. There are three sub-types of seals: permanent, semipermanent, and momentary.</p>
+            <ul className="list-disc list-inside mt-2 text-sm text-slate-400 space-y-1 ml-2">
+              <li><strong className="text-white">Permanent:</strong> The most complicated. Can last through multiple roleplay sessions, sometimes indefinitely until the seal is removed.</li>
+              <li><strong className="text-white">Semipermanent:</strong> Will only last through a single roleplay session, and is removed automatically after the RP session has ended.</li>
+              <li><strong className="text-white">Momentary:</strong> Can be placed and is active for multiple turns. Will automatically be removed once the chakra used to keep it in place is no longer being supplied. Mostly fall under Continuous or Multi-post.</li>
+            </ul>
+            <p className="text-sm text-slate-300 mt-2">These types of techniques are the most likely to have potential special effects such as limiting a target's usable CU, lowering various stats, temporarily siphoning chakra, etc.</p>
+          </div>
+
+          <div>
+            <h5 className="font-bold text-white">Medical Ninjutsu</h5>
+            <p className="text-sm text-slate-300">Best described as ninjutsu techniques that biologically affect the target, even if that target is the user themselves. Though techniques that heal a target physically, mentally, or otherwise are the main sub-type, a subtype dedicated to the harm of a target also exists. Using ninjutsu created poisons, health hazards, or surgical related techniques meant to harm rather than help are examples of medical ninjutsu.</p>
+          </div>
+        </div>
+
+        <h4 className="text-cyan-400 font-bold mt-8 mb-2 border-b border-slate-800 pb-2">4. Potential Special Effects</h4>
+        <p className="text-slate-300 text-sm">Some techniques and abilities granted by canon and custom weapons and "modes" can have extra effects. This can range from removing/limiting a partial amount of a character's CU, debuffing or buffing stats and skills, or a wide array of other temporary or lingering bonuses otherwise not clarified by the other sections of a jutsu's database entry.</p>
+        <p className="text-slate-300 text-sm mt-2">There can even potentially be ones that replenish lost CU to an extent. There is a lot of potential to get creative with this area. Please remember that MOST techniques will not have a special effect, and players should not attempt to stack techniques in their character's jutsu list that have a lot of effects. Effects can wildly alter a technique's Rank, and therefore the chakra lost by using it.</p>
+        <p className="text-slate-300 text-sm mt-2">Other special effects may be caused by the scene/environment of a roleplay. One such special effect could be an environment causing techniques to use double chakra to be performed, or lowering a character's CU over time. Positive benefits may also occur.</p>
+        
+        <div className="bg-yellow-900/20 border border-yellow-700/50 p-4 rounded mt-4">
+          <p className="text-yellow-500 text-xs uppercase font-bold tracking-wider mb-1">Staff Note</p>
+          <p className="text-yellow-200/80 text-sm">This area of the OCS will no doubt be the most complicated one for both staff and players. It will be the most scrutinized area, due to the high potential of imbalance and unfair advantages, both by mistake and intentional. Unfortunately, there exists roleplayers who seek out flaws and loopholes to exploit, and this area may be the key to many of them. Because of this, we ask for patience and understanding when staff members are checking and questioning these.</p>
+        </div>
+      </Section>
+
+      <Section title="Replenishing & Running out of CU">
+        <h4 className="text-cyan-400 font-bold mb-2">Replenishing CU</h4>
+        <p>Chakra does NOT replenish naturally during the course of a roleplay session.</p>
+        <p className="mt-2">There is the potential for special effects to cause replenishment to occur during a roleplay session however. One example would be different canon or custom battle modes.</p>
+        <p className="mt-2">In most cases a character's CU will be reset to max at the end of a roleplay session/the beginning of the next roleplay they partake in. It is assumed that enough time has passed to properly recover.</p>
+        <p className="mt-2">However, in special cases CU may not be replenished, such as a roleplay session knowingly taking place in the character's timeline a short time after the last one ended, special events, or when certain special effects have been used. For example, if a permanent seal has been placed on a target that limits their chakra, or chakra recovery.</p>
+        <p className="mt-2 text-sm italic text-slate-500">If ever in doubt, please ask a staff member to clarify if your character's CU has replenished.</p>
+
+        <h4 className="text-cyan-400 font-bold mt-8 mb-2">Running out of CU</h4>
+        <p>One of the risks of using too many techniques or techniques of high caliber is the risk of running out of chakra. Those who run out of chakra run a high risk of their body and organs shutting down, which could cause unconsciousness or death.</p>
+        
+        <div className="space-y-3 mt-4">
+          <div className="bg-slate-900/80 p-4 border-l-4 border-blue-500 rounded-r">
+            <h5 className="font-bold text-white">Exactly Zero CU</h5>
+            <p className="text-sm text-slate-300 mt-1">If a character hits Zero chakra even, they will become unconscious at the end of the post in which they used the last of their chakra. This leaves them open to capture. Once unconscious they can not interact with the roleplay unless they are brought back up to at least 1 CU by a character played by another player.</p>
+          </div>
+          <div className="bg-slate-900/80 p-4 border-l-4 border-yellow-500 rounded-r">
+            <h5 className="font-bold text-white">Negative CU (Pushing the Limit)</h5>
+            <p className="text-sm text-slate-300 mt-1">If a character does not have enough remaining CU to perform a technique, they can push their body to the limit and push themselves in the negative. Doing this is an extreme stress on the body.</p>
+          </div>
+          <div className="bg-slate-900/80 p-4 border-l-4 border-orange-500 rounded-r ml-4">
+            <h5 className="font-bold text-white">-1 to -4 CU</h5>
+            <p className="text-sm text-slate-300 mt-1">They will become unconscious and unable to wake until their next roleplay. Even if they are given enough chakra to even out as Zero CU, they will not be able to regain consciousness during that roleplay. If a character ends a roleplay with negative 1 - negative 4 CU, they will start their next roleplay with only HALF of their max CU.</p>
+          </div>
+          <div className="bg-slate-900/80 p-4 border-l-4 border-red-500 rounded-r ml-4">
+            <h5 className="font-bold text-white">-5 to -8 CU (Death Risk)</h5>
+            <p className="text-sm text-slate-300 mt-1">They will die. This is a non-negotiable effect of drawing the very last drops of chakra from your body. On the turn they push themselves this far, they will fall unconscious. At the start of their next turn, death will occur.</p>
+            <p className="text-sm text-slate-300 mt-2">The only way this can be stopped is if the character is healed totally out of a negative CU (zero even or higher) before their next turn. If that occurs, they will live, and start their next RP at half max CU.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Tracking System">
+        <p className="text-lg text-white font-medium">Players are required to track their chakra usage in every roleplay that involves combat or the use of chakra.</p>
+        <p className="mt-2 text-slate-300">Below you will find a handy template for doing this, as well as an explanation to what each piece of that template is for. This template will go at the end of your post, preferably in a separate post made without the use of a tupperbot, so that it can be easily edited if needed.</p>
+
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">When do I use this?</h4>
+        <ol className="list-decimal list-inside mt-2 text-slate-300 space-y-2 ml-2">
+          <li>If combat of any kind starts in a roleplay, ALL characters must add this to the end of their post. It will continue to be used until that roleplay ends, even if combat ends before the end of the roleplay.</li>
+          <li>Outside of combat, if a character uses chakra for any reason that would deduct from their CU. That character is required to use this for the remainder of the roleplay. Other characters/players do not need to do this so long as they do not use any CU themselves.</li>
+          <li>A player may post this at any time, even if they are not using CU/in combat, just to stay in the habit of it. However once they do, they should continue doing so for the remainder of the roleplay.</li>
+        </ol>
+
+        <h4 className="text-cyan-400 font-bold mt-8 mb-4 border-b border-slate-800 pb-2">Tracking Templates</h4>
+        <p className="text-sm text-slate-400 mb-4">You should copy the following messages and keep them somewhere so that you can quickly add them when needed.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TemplateBox title="CU Template (Redacted)" content={`Chakra Unit Usage\n\n[Character Name]\nThis Turn:\nContinued:\nXX CU Used\nXX/XX CU Remaining\nActive Battle Modes:\n\nNext Up\n@next person in turn order`} />
+          
+          <TemplateBox title="CU Template (Non-redacted Example)" content={`Chakra Unit Usage\n\nLawbind Uzumaki\nThis Turn:\nD Rank- Fireball Technique\nContinued:\nNone\n2 CU Used\n998/1000 CU Remaining\nActive Battle Modes: None\n\nNext Up\n@Lawbind`} />
+
+          <TemplateBox title="CU Template (Multiple Techniques)" content={`Chakra Unit Usage\n\nLawbind Uzumaki\nThis Turn:\nC Rank- Earth Dome\nB Rank- Lightning Blast\nContinued:\nC Rank- Overdrive Technique\n14 CU Used\nXX/XX CU Remaining\nActive Battle Modes: Sage Mode 100%\n\nNext Up\n@Lawbind`} />
+
+          <TemplateBox title="Summoning CU Template" content={`Chakra Unit Usage\n\n[Summon Name]\nClass:\nThis Turn:\nContinued:\nXX CU Used\nXX/XX CU Remaining\nHits Taken:\nTurns Remaining:\nMore Info:`} />
+        </div>
+
+        <div className="mt-8 space-y-4 text-sm text-slate-300">
+          <p><strong className="text-white">This Turn:</strong> If you use nothing, simply leave this blank or put N/A. If you do use something, dictate the rank and the name of the technique. List each on its own line.</p>
+          <p><strong className="text-white">Continued:</strong> Where you will place Multi-Post or Continuous techniques from previous posts that are still being used. Keep in mind Multi-post pay all costs for each turn upfront, and continuous only pay the CU on turns it is used.</p>
+          <p><strong className="text-white">CU Remaining:</strong> Most characters will not be able to tell how much CU another character has left. If no logical way is present, leave this as "XX/XX". YOU are still required to know for your own character and keep this information up to date. If a sensory ability is present, fill the "XX/XX" out.</p>
+          <p><strong className="text-white">Active Battle Modes:</strong> If you have any battle modes (sage mode, curse mark, etc), add them here with their skill %. Their CU cost to keep active should be added to your total.</p>
+        </div>
+
+        <div className="bg-red-900/20 border border-red-700/50 p-4 rounded mt-6">
+          <p className="text-red-400 font-bold mb-1">Editing a Posted Chakra Usage Chart</p>
+          <p className="text-red-200/80 text-sm">If you for ANY reason need to edit a chakra usage section after it has been posted you MUST let a staff member know BEFORE you do it, and why you are editing it. Otherwise it may be seen as a way to try and cheat the system. We will know, between logs and the little edited symbol that shows up.</p>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function GenjutsuSystemView() {
+  const [roll, setRoll] = useState(50);
+  const [skill, setSkill] = useState(30);
+  const [turn, setTurn] = useState(1);
+
+  const turnBonus = turn === 1 ? 0 : turn === 2 ? 20 : turn === 3 ? 30 : turn === 4 ? 40 : 50;
+  const totalEscape = Number(roll || 0) + Number(skill || 0) + turnBonus;
+
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Genjutsu System <Eye className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules for illusionary techniques and the Roll-Off system.</p>
+        <blockquote className="mt-4 border-l-4 border-cyan-500 pl-4 italic text-slate-500 text-sm bg-slate-900/50 py-2 rounded-r">
+          Genjutsu (literally meaning: Illusionary Techniques) is one of the main jutsu categories which uses chakra. Unlike ninjutsu, the effects of genjutsu are not real, being only sensory illusions experienced by those who fall victim to it. -- Narutopedia
+        </blockquote>
+      </header>
+
+      <Section title="What is Genjutsu?">
+        <p>Genjutsu is the act of placing your chakra into another person and influencing how they perceive the world around them. This can take many forms such as making it hard to resist a command, creating illusions, creating fake pain, etc. This is also why certain dojutsu which can see chakra inside of a person (like Byakugan), and some sensors can identify a genjutsu. They are seeing or sensing the foreign chakra within the target.</p>
+        
+        <p className="mt-4">Sometimes a genjutsu uses things like sound or eye contact to initiate the genjutsu. But no matter how the caster injects their chakra into the other person, there are only 2 ways to place a target under a genjutsu.</p>
+        
+        <div className="flex flex-col md:flex-row gap-4 mt-4">
+          <div className="flex-1 bg-slate-900/80 p-5 rounded-lg border border-slate-700 text-center">
+            <h4 className="text-white font-bold mb-2 text-lg">Method 1</h4>
+            <p className="text-cyan-400">Both players must agree on the genjutsu connecting OOC. This is probably the easiest way but is not required.</p>
+          </div>
+          <div className="flex items-center justify-center font-black text-slate-600">OR</div>
+          <div className="flex-1 bg-slate-900/80 p-5 rounded-lg border border-slate-700 text-center">
+            <h4 className="text-white font-bold mb-2 text-lg">Method 2</h4>
+            <p className="text-cyan-400">You must win the Genjutsu Roll-Off.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Genjutsu Roll-Off">
+        <p>When the character attempting to use a genjutsu posts the attack, they will use the roll command <strong className="text-cyan-400">IN THE RP SCENE CHANNEL</strong>. Using this command, they will roll 1 d100. This is your "attack roll."</p>
+        <p className="mt-2">The Defender will then roll their own, single, d100 as well, this is the defense roll.</p>
+        <p className="mt-2 text-white font-medium bg-slate-900 p-3 rounded border-l-2 border-cyan-500">For every 10% in genjutsu skill you have, you will add your genjutsu skill percentage to the roll. This applies to both attackers and defenders for the first roll.</p>
+        <p className="mt-4 text-slate-400 italic">Example: If I have Genjutsu 40%, and I roll a 43/100, my total is 83. If you roll a defense of 50/100 but your genjutsu stat is only 30%, that equals 80, and you fall for the genjutsu.</p>
+      </Section>
+
+      {/* Calculator */}
+      <div className="bg-slate-900 border border-cyan-500/30 rounded-xl p-6 shadow-[0_4px_20px_rgba(6,182,212,0.1)]">
+        <h3 className="text-xl font-bold text-cyan-400 mb-6 flex items-center gap-2"><Calculator size={20} /> Escape Defense Calculator</h3>
+        
+        <div className="grid md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">D100 Roll Result</label>
+            <input type="number" min="1" max="100" value={roll} onChange={(e) => setRoll(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-cyan-400 outline-none" />
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Genjutsu Skill %</label>
+            <input type="number" step="10" min="0" max="100" value={skill} onChange={(e) => setSkill(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-cyan-400 outline-none" />
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Turn Number</label>
+            <select value={turn} onChange={(e) => setTurn(Number(e.target.value))} className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-cyan-400 outline-none">
+              <option value={1}>Turn 1 (Initial Cast)</option>
+              <option value={2}>Turn 2 (+20 Bonus)</option>
+              <option value={3}>Turn 3 (+30 Bonus)</option>
+              <option value={4}>Turn 4 (+40 Bonus)</option>
+              <option value={5}>Turn 5+ (+50 Bonus)</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-8 p-6 bg-slate-950 rounded-lg border-2 border-cyan-900 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-slate-400 font-mono text-sm">
+            Formula: Roll ({roll}) + Skill ({skill}%) {turn > 1 ? `+ Turn Bonus (${turnBonus})` : ''}
+          </div>
+          <div className="text-right">
+            <span className="block text-xs uppercase tracking-widest text-slate-500 mb-1">Total Defense Score</span>
+            <span className="text-4xl font-black text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
+              {totalEscape}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <Section title="Maintaining a Genjutsu & Escaping">
+        <p>Each turn the defender attempts to escape a genjutsu. <strong>BEFORE</strong> you post your attempt to escape it, you will roll again IN THE RP CHANNEL, and the attacker will also roll again. However, the situation within the roleplay should be considered, and one of the following roll types be used.</p>
+        
+        <ul className="space-y-3 mt-4">
+          <li className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-red-500">
+            <strong className="text-white block mb-1">Attacker Advantage:</strong> The situation reasonably shows the defender has little to no chance of escape. Attacker's total is <span className="text-cyan-400 font-mono">roll + skill</span> while defender's total is just the <span className="text-cyan-400 font-mono">roll</span>. No escape turn or skill % is added.
+          </li>
+          <li className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-green-500">
+            <strong className="text-white block mb-1">Defender Advantage:</strong> The situation reasonably shows the defender has a higher chance of escaping the genjutsu. Defender's total is <span className="text-cyan-400 font-mono">roll + skill + turn defense</span>. Attacker's total is only the <span className="text-cyan-400 font-mono">roll</span>.
+          </li>
+          <li className="bg-slate-900/60 p-4 rounded-lg border-l-4 border-yellow-500">
+            <strong className="text-white block mb-1">Neutral:</strong> The situation does not show any major details that could effect escape. Attacker's total is <span className="text-cyan-400 font-mono">roll + skill</span>. Defender's Total is <span className="text-cyan-400 font-mono">roll + skill + turn defense</span>.
+          </li>
+        </ul>
+
+        <p className="mt-6"><strong>ALSO:</strong> The more disruptive the genjutsu is (causing pain, things that are clearly hallucinations, would cause the defender to act against their character, etc) the more likely the person is to realize it is a genjutsu and break out.</p>
+        <p className="mt-2 text-slate-400 text-sm italic">NOTE: There may be situations where the initial attack does not gain the attacker's bonus from genjutsu stat. Some examples of this would be poor eye sight, or other reasonable situations. Ask a staff member if you're unsure if you are at a disadvantage while doing a genjutsu.</p>
+      </Section>
+    </div>
+  );
+}
+
+function PoisonSystemView() {
+  const [medSkill, setMedSkill] = useState(0);
+
+  // Helper for poison calc text
+  const getDefenseRequirement = (skillVal) => {
+    if (skillVal === 0) return "Auto-fail. Poison always takes effect.";
+    if (skillVal >= 10 && skillVal <= 40) return "Roll 81-100 to resist (1-80 fails).";
+    if (skillVal >= 50 && skillVal <= 70) return "Roll 71-100 to resist (1-70 fails).";
+    if (skillVal >= 80 && skillVal <= 90) return "Roll 61-100 to resist (1-60 fails).";
+    if (skillVal === 100) return "Roll 61-100 to resist (1-60 fails). Advantage: Roll twice and use highest.";
+    return "Select a valid skill.";
+  };
+
+  const getDosesInfo = (skillVal) => {
+    if (skillVal === 0) return "0 Doses / 0 Variations (Unless Clan/Special)";
+    if (skillVal >= 10 && skillVal <= 20) return "1 Dose per RP | 1 Poison Variation";
+    if (skillVal >= 30 && skillVal <= 40) return "2 Doses per RP | 1 Poison Variation";
+    if (skillVal === 50) return "3 Doses per RP | 2 Poison Variations";
+    if (skillVal === 60) return "4 Doses per RP | 2 Poison Variations";
+    if (skillVal === 70) return "5 Doses per RP | 3 Poison Variations";
+    if (skillVal === 80) return "6 Doses per RP | 3 Poison Variations";
+    if (skillVal === 90) return "7 Doses per RP | 4 Poison Variations";
+    if (skillVal === 100) return "8 Doses per RP | 4 Poison Variations";
+    return "";
+  };
+
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Poison System <Skull className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules for obtaining, applying, and defending against poisons, toxins, and venoms.</p>
+      </header>
+
+      {/* Poison Calculator Widget */}
+      <div className="bg-slate-900 border border-cyan-500/30 rounded-xl p-6 shadow-[0_4px_20px_rgba(6,182,212,0.1)]">
+        <h3 className="text-xl font-bold text-cyan-400 mb-6 flex items-center gap-2"><Shield size={20}/> Poison Defense & Usage Calculator</h3>
+        
+        <div>
+          <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Your Medical Ninjutsu Skill %</label>
+          <select value={medSkill} onChange={(e) => setMedSkill(Number(e.target.value))} className="w-full md:w-1/2 bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-cyan-400 outline-none">
+            {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(val => (
+              <option key={val} value={val}>{val}%</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-6">
+          <div className="p-4 bg-slate-950 rounded border border-slate-800">
+            <h4 className="text-xs uppercase text-slate-500 font-bold mb-1">Defense Roll Requirement</h4>
+            <p className="text-cyan-400 font-medium">{getDefenseRequirement(medSkill)}</p>
+          </div>
+          <div className="p-4 bg-slate-950 rounded border border-slate-800">
+            <h4 className="text-xs uppercase text-slate-500 font-bold mb-1">Allowed Doses / Variations</h4>
+            <p className="text-purple-400 font-medium">{getDosesInfo(medSkill)}</p>
+          </div>
+        </div>
+      </div>
+
+      <Section title="How to obtain various poisons">
+        <p>There are a few different ways to obtain different poisons, toxins, or other related things. These are:</p>
+        <ul className="list-disc list-inside mt-4 text-slate-400 space-y-3 ml-2">
+          <li>
+            <strong className="text-white">Clan Hidden/KKG:</strong> If your clan or kkg already has a poison related feature built into their abilities, then you have access to those things without the need to follow any other method below. (e.g., 7 Tails Jinchuriki Toxin Release, Orochi Clan venoms).
+          </li>
+          <li>
+            <strong className="text-white">Medical Ninjutsu Nature:</strong> Characters that have access to the main/biggest section of the poison system. Within the character sheet in the section where you select your natures, there is an option for "Medical Ninjutsu" as a nature.
+          </li>
+          <li>
+            <strong className="text-white">Medical Techniques with Poison:</strong> Some medical ninjutsu used for offense instead of healing/support may have poison usage connected to them. They will have to use one of the various forms of poison below.
+          </li>
+        </ul>
+        <p className="mt-4 text-sm text-yellow-500 bg-yellow-900/20 p-3 rounded border border-yellow-900">For the time being, we will NOT be accepting custom poisons, as we need to test the entire poison system and other things before adding this feature.</p>
+      </Section>
+
+      <Section title="Poison Usages & Rules">
+        <p>This is specifically for adding poisons to weapons or other items, not for technique/medical ninjutsu usage. One use counts as applying one dose of a poison to whatever it is being used for.</p>
+        
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">What counts as a use:</h4>
+        <p>Any attack made with a weapon, tool, or other item, that intends to introduce poisons into a body of another living creature. This counts as a use even if the attack does not land or does not successfully poison them. Any other attempts that are not direct attacks, but state that poisoning another is being attempted. This includes things like lacing a defense with poison before another makes contact with it, or using a smoke bomb laced with poisons. You MUST state somewhere in your post that poison is being attempted in order for it to be valid.</p>
+
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">How a Poison is successfully Applied:</h4>
+        <p>When a poison is applied, be it from a weapon/item, laced smoke bomb, or a medical ninjutsu such as the poison smoke fog jutsu, the defender will need to make a d100 roll. What you roll will determine if the poison takes effect or not based on your medical ninjutsu skill level % (See calculator above).</p>
+        
+        <p className="mt-4"><strong className="text-white">Other Poisons:</strong> Things such as the 7 tail's toxin release, Orochi venom, or other toxins/venoms granted by a clan/KKG will bypass this defense roll. Think of the roll as your body's ability to become immune to natural poisons thanks to your medical skill level, and that venoms and toxins are special types of poisons that characters are unable to become naturally immune to.</p>
+
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">Overcoming Poisons Naturally:</h4>
+        <p>Naturally Overcoming a poison is the act of it running its course through your body, and its effects being removed. When a poison has been in a character's system for 3 full turns, they can reroll their poison defense roll. If they get a high enough number, based on the medical skill level above, one dose of a poison's effect is removed from the character. If they were infected by more than 1 dose, then they can roll again after another 3 turns. These rolls are done at the end of the 3rd turn, not the start of the turn after. It will always be 3 turns.</p>
+      </Section>
+
+      <Section title="Types of Poisons">
+        <p className="mb-4">Below are the different types/variations of poisons that a character can gain access to. Keep in mind these do not include kkgs. These are strictly ones that will be used for weapon/tool/item applications or medical ninjutsu that utilizes poisons.</p>
+        
+        <div className="space-y-4">
+          <PoisonCard title="Type A: Physical Damage" desc="Damages a target's body over time via the muscular system and internal organs, eventually knocking them out or killing them.">
+            <li><strong>1 Dose:</strong> Target feels sick, is more fatigued and internal organs begin noticeably hurting, strength stat reduced by 1 rank.</li>
+            <li><strong>2 Doses:</strong> Target will vomit every post their internal organs enduring great pain, and will have strength reduced by 2 ranks.</li>
+            <li><strong>3 Doses:</strong> Target will become unconscious, with potential death after 2 turns unconscious unless cured of at least 1 dose.</li>
+          </PoisonCard>
+
+          <PoisonCard title="Type B: Mental Cognition" desc="Damages a target's mental cognition and reaction speed, rendering them essentially knocked out without actually knocking them out. Non-lethal.">
+            <li><strong>1 Dose:</strong> Target's mental function lowers, causing dizziness and loss of focus, reduces speed stat by 1 rank.</li>
+            <li><strong>2 Doses:</strong> Target's behavior becomes affected, usually making them seem silly, drunk, high, or otherwise impaired. Reaction timing is greatly affected. Speed Stat reduced by 2 ranks.</li>
+            <li><strong>3 Doses:</strong> Target becomes comatose, unable to move at all, while usually under the effect of some intense hallucinations. After 2 turns, unable to post the rest of the RP.</li>
+          </PoisonCard>
+
+          <PoisonCard title="Type C: Chakra Disruption" desc="Affects the user's ability to gather, manipulate, or control Chakra properly. Non-lethal.">
+            <li><strong>1 Dose:</strong> Target's use of CU is increased by one rank (costs more). Does NOT affect special chakras (Sage mode, beast, etc).</li>
+            <li><strong>2 Doses:</strong> Increased cost of CU now also affects special chakra.</li>
+            <li><strong>3 Doses:</strong> Target is unable to utilize chakra in any form, meaning they can not use ninjutsu, genjutsu, or other techniques with a CU cost, until cured of at least one dose.</li>
+          </PoisonCard>
+
+          <PoisonCard title="Type D: Chakra Damage" desc="Directly damages a target's chakra network. Eventually can lead to unconsciousness or death.">
+            <li><strong>1 Dose:</strong> Target loses 2 CU per turn while affected.</li>
+            <li><strong>2 Doses:</strong> Target loses 4 CU per turn.</li>
+            <li><strong>3 Doses:</strong> Target loses 6 CU per turn.</li>
+            <li><strong>4 Doses:</strong> Target loses 8 CU per turn.</li>
+            <li className="text-slate-500 italic mt-2 list-none">Note: Affects special chakras FIRST before regular CU.</li>
+          </PoisonCard>
+
+          <PoisonCard title="Type E: Nature Block" desc="Effects their ability to use different chakra natures via techniques/jutsu, without damaging their actual CU.">
+            <li><strong>1 Dose:</strong> Effects block the use of one nature, chosen by a roll (1dx based on total natures they have).</li>
+            <li><strong>2 Doses:</strong> Effects block the use of 2 natures, chosen by roll[s].</li>
+            <li><strong>3 Doses:</strong> Effects block the use of 3 natures, chosen by roll[s].</li>
+          </PoisonCard>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function ConsumablesView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Consumable Items <Beaker className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules for gaining and using consumable items during roleplay.</p>
+      </header>
+
+      <Section title="Gaining & Using Consumables">
+        <p><strong>All consumables must be gained in character and can not be started with.</strong> Gaining these items must be approved by staff. They are rewards for things such as missions, events, bounties, or other special roleplays. Staff can also give these out should they see a situation reasonable to do so, or as rewards to players for good conduct ooc, or otherwise working hard on staying active, helping others out, or working to improve themselves.</p>
+        <p className="mt-4">Once you gain one via any method above, it must be added to your inventory on your character sheet. Once you use it, its gone and is not automatically replenished - you must gain another IC. You can gain multiple, but can only use them as per the limits below.</p>
+      </Section>
+
+      <Section title="Current Consumables">
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-slate-900 p-5 rounded-lg border border-slate-700">
+            <h4 className="text-cyan-400 font-bold text-lg mb-1">Chakra Pills</h4>
+            <span className="text-xs uppercase bg-slate-800 px-2 py-1 rounded text-slate-400 font-bold tracking-wider">Limit: 1 per RP</span>
+            <p className="mt-3 text-slate-300">These grant the character the ability to regain up to 10 CU, without going over their max CU. The effect activates on the turn after the chakra pill is consumed.</p>
+          </div>
+
+          <div className="bg-slate-900 p-5 rounded-lg border border-slate-700">
+            <h4 className="text-cyan-400 font-bold text-lg mb-1">Speed Pill</h4>
+            <span className="text-xs uppercase bg-slate-800 px-2 py-1 rounded text-slate-400 font-bold tracking-wider">Limit: 1 per RP (Shares limit with Strength)</span>
+            <p className="mt-3 text-slate-300">These grant the character the ability to boost the speed stat by 1 rank [up to S rank max] for 3 turns. The effect activates on the turn after the pill is consumed.</p>
+          </div>
+
+          <div className="bg-slate-900 p-5 rounded-lg border border-slate-700">
+            <h4 className="text-cyan-400 font-bold text-lg mb-1">Strength Pill</h4>
+            <span className="text-xs uppercase bg-slate-800 px-2 py-1 rounded text-slate-400 font-bold tracking-wider">Limit: 1 per RP (Shares limit with Speed)</span>
+            <p className="mt-3 text-slate-300">These grant the character the ability to boost the strength stat by 1 rank [up to S rank max] for 3 turns. The effect activates on the turn after the pill is consumed.</p>
+          </div>
+
+          <div className="bg-slate-900 p-5 rounded-lg border border-slate-700">
+            <h4 className="text-cyan-400 font-bold text-lg mb-1">Genjutsu Pill</h4>
+            <span className="text-xs uppercase bg-slate-800 px-2 py-1 rounded text-slate-400 font-bold tracking-wider">Limit: 1 per RP</span>
+            <p className="mt-3 text-slate-300">Allows the user to defend against any genjutsu of A rank or below without the need for a genjutsu defense roll [aka, skipping the genjutsu system]. The effect activates upon the turn the pill is consumed and lasts for 5 turns after that.</p>
+          </div>
+
+          <div className="bg-slate-900 p-5 rounded-lg border border-slate-700 md:col-span-2">
+            <h4 className="text-cyan-400 font-bold text-lg mb-1">Chakra Drain Pill</h4>
+            <span className="text-xs uppercase bg-slate-800 px-2 py-1 rounded text-slate-400 font-bold tracking-wider">Limit: 1 per RP</span>
+            <p className="mt-3 text-slate-300">Allows the user, or those they give the pill to, to reduce their current CU by 10 CU, but can not go below 0 CU [into the negatives]. While this sounds useless to some extent, there are potential uses if you strategize right.</p>
+          </div>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function SummoningSystemView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Summoning System <Scroll className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules for obtaining, maintaining, and fighting with summon contracts.</p>
+      </header>
+
+      <Section title="Gaining a Contract">
+        <p>A character can gain a summon contract at any shinobi rank. There are a few stipulations to a character gaining a contract however, which are:</p>
+        <ul className="list-disc list-inside mt-4 text-slate-400 space-y-2 ml-2">
+          <li>A Character MUST have at least 10% skill level in Fuinjutsu before they can sign a contract. They do not need to further upgrade this skill to use the summon system.</li>
+          <li>A Character MUST gain the summon contract in character, meaning that they can not create a character to start with a summon contract.</li>
+          <li>A Character MUST have at least one open space on their jutsu list to gain a summon contract. The summoning technique will take a jutsu slot.</li>
+          <li>A Character can not have another contract, or have had another contract in the past. Even if they are removed from that contract, they can not gain another later on.</li>
+          <li>A character must find a staff npc or a player character [OC] that is connected to the contract in question in order for the option to sign a contract to become available. Approval/denial must be made based on logical IC reasonings.</li>
+        </ul>
+      </Section>
+
+      <Section title="Contract Details & Limits">
+        <p>Every contract will be a custom contract, though many might use a canon contract as a base. No canon summons are allowed, but similar creatures can exist. Each contract has a limited number of creatures tied to it mechanically. These limits are per contract, not per person, and are shared between all contract holders.</p>
+        
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+          <div className="bg-slate-900 p-5 rounded border border-slate-700">
+            <h4 className="text-cyan-400 font-bold text-lg border-b border-slate-800 pb-2 mb-3">Non-Combat Summons</h4>
+            <ul className="space-y-3 text-sm text-slate-300">
+              <li><strong className="text-white">Pet/companion:</strong> Small animal. One unique per character. No CU cost to summon. Can start RP with them.</li>
+              <li><strong className="text-white">Messenger:</strong> Used to send messages. Unique per character if desired.</li>
+              <li><strong className="text-white">Informants:</strong> Controlled by staff/story team. Can vary in size. Cannot be summoned in combat.</li>
+              <li><strong className="text-white">Contract Holder:</strong> 1 per contract. Used for signing. Cannot be called in combat.</li>
+            </ul>
+          </div>
+          
+          <div className="bg-slate-900 p-5 rounded border border-slate-700">
+            <h4 className="text-cyan-400 font-bold text-lg border-b border-slate-800 pb-2 mb-3">Combat Summons</h4>
+            <ul className="space-y-3 text-sm text-slate-300">
+              <li><strong className="text-white">Minor Summon:</strong> 4 Per Contract. Costs 4 CU. Un-summoned on 1 B-Rank hit or 2 hits lower than B-Rank. Stats: Maxed Genin. 5 C-Rank Jutsu max. Total CU: 10.</li>
+              <li><strong className="text-white">Major Summon:</strong> 2 Per Contract. Costs 6 CU. Un-summoned on 2 B-Rank hits. Stats: Maxed Special Jounin. 7 B-Rank Jutsu max. Total CU: 20.</li>
+              <li><strong className="text-white">Boss Summon:</strong> 1 Per Contract. Costs 8 CU. Un-summoned on 4 B-Rank hits. Stats: Maxed Jounin. 9 A-Rank Jutsu max. Total CU: 30.</li>
+            </ul>
+            <p className="mt-3 text-xs text-slate-500 italic">Note: S-Rank hits count as 2 hits. Summons cannot regain CU.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Summon Points & Stat % Levels">
+        <p>In addition to using CU to summon, a character also uses Summon Points. These regulate how many summons per RP you are able to do.</p>
+        <ul className="flex gap-4 mt-2 text-sm text-slate-400 flex-wrap">
+          <li className="bg-slate-900 px-3 py-1 rounded"><strong>Non-combat:</strong> 0 SP</li>
+          <li className="bg-slate-900 px-3 py-1 rounded"><strong>Minor:</strong> 1 SP each</li>
+          <li className="bg-slate-900 px-3 py-1 rounded"><strong>Major:</strong> 3 SP each</li>
+          <li className="bg-slate-900 px-3 py-1 rounded"><strong>Boss:</strong> 6 SP each</li>
+        </ul>
+
+        <h4 className="text-cyan-400 font-bold mt-6 mb-2">Unlocks by % Level</h4>
+        <div className="bg-slate-900 rounded border border-slate-700 p-4 font-mono text-sm text-slate-300 space-y-1">
+          <p><span className="text-white">10%:</span> Gain Contract | Summons Jutsu | Non-combat only (1 per RP)</p>
+          <p><span className="text-white">20%:</span> Gain Minor Class | 1 SP per RP</p>
+          <p><span className="text-white">30%:</span> 2 SP per RP</p>
+          <p><span className="text-white">40%:</span> 3 SP per RP</p>
+          <p><span className="text-white">50%:</span> Gain Major Class</p>
+          <p><span className="text-white">60%:</span> 4 SP per RP</p>
+          <p><span className="text-white">70%:</span> 5 SP per RP</p>
+          <p><span className="text-white">80%:</span> 6 SP per RP</p>
+          <p><span className="text-white">90%:</span> Gain Boss Class</p>
+          <p><span className="text-white">100%:</span> 10 SP per RP</p>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function CustomItemsView() {
+  return (
+    <div className="space-y-12 animate-fade-in">
+      <header className="border-b border-slate-800 pb-6">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+          Custom Item System <Swords className="text-cyan-500" size={32} />
+        </h2>
+        <p className="mt-2 text-slate-400">Rules for custom weapons, tools, and their unique abilities.</p>
+      </header>
+
+      <Section title="Notes about Custom Weapons/Items">
+        <p>A character may ONLY HAVE up to two custom weapons/items at a time. If you have one of the seven swords of the mist, or another high level item, then your limit is one custom item. This includes being a Jinchuriki, having Sage Mode, Curse Mark, and potentially other clan or non-clan related things.</p>
+        <p className="mt-2">A character may be denied a second custom weapon if the staff feel it will be too much and cause imbalance of the character.</p>
+        <p className="mt-2">A weapon DOES NOT have the ability to conduct chakra into it unless it is a custom weapon with "chakra infusion metal" as one of the abilities. If you have a specific jutsu that instead adds to the weapon, you do not need this ability on the weapon.</p>
+      </Section>
+
+      <Section title="Loss of a Custom Weapon/Tool">
+        <p>A character can potentially lose a custom weapon/tool during a roleplay. In some cases it may be stolen by another character or an NPC. To avoid members using the intellectual property of another by gaining a custom item created by them, the loss will be handled in one of two ways:</p>
+        <ol className="list-decimal list-inside mt-4 text-slate-400 space-y-2 ml-2">
+          <li>The creator of the weapon/item must agree OOC that they are ok with the player who took it to use it. The new holder will need to RP as if they do not fully understand how it works until researched.</li>
+          <li>If the creator does not allow others to use their weapons: At the end of the roleplay when the weapon was taken, it no longer belongs to either player involved. It is given away, sold, lost, etc. off screen. The creator may be given a chance in the future to reobtain the weapon through interactions with a staff NPC.</li>
+        </ol>
+      </Section>
+
+      <Section title="Abilities a Weapon Can Have">
+        <p className="text-cyan-400 font-bold">Custom Item [One Ability] / Custom Item [Two Abilities]</p>
+        <p className="text-slate-400 text-sm mb-4">Note: Having more than one custom weapon/item with two abilities will not be allowed.</p>
+
+        <div className="space-y-4">
+          <div className="bg-slate-900 p-4 rounded border-l-4 border-cyan-500">
+            <h4 className="text-white font-bold mb-1">Chakra Metal</h4>
+            <p className="text-slate-300 text-sm">Made out of special metal that allows chakra to flow through it. Allows a nature to go through the weapon and the weapon takes on a special feature related to that nature (e.g., fire = hot, wind = sharper). Basic weapons do not automatically have this.</p>
+          </div>
+          <div className="bg-slate-900 p-4 rounded border-l-4 border-cyan-500">
+            <h4 className="text-white font-bold mb-1">Technique Catalyst</h4>
+            <p className="text-slate-300 text-sm">Adapted to allow for the use of techniques of one specific nature. They still cost CU to use. Techniques used through them can be B rank or below.</p>
+          </div>
+          <div className="bg-slate-900 p-4 rounded border-l-4 border-cyan-500">
+            <h4 className="text-white font-bold mb-1">CU Absorption</h4>
+            <p className="text-slate-300 text-sm">Absorbs Chakra Units, allowing them to be used for other techniques related to the weapon. Can not be transmitted to the holder. Can absorb via direct contact (touching human) OR indirect contact (striking/defending against ninjutsu).</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Uses Per RP">
+        <p>Any Custom weapon may be used 1 time for each 20% skill level in kenjutsu you have:</p>
+        <div className="flex gap-4 mt-2 text-sm text-slate-400 flex-wrap">
+          <li className="bg-slate-900 px-3 py-1 rounded list-none"><strong>20%:</strong> 1 use</li>
+          <li className="bg-slate-900 px-3 py-1 rounded list-none"><strong>40%:</strong> 2 uses</li>
+          <li className="bg-slate-900 px-3 py-1 rounded list-none"><strong>60%:</strong> 3 uses</li>
+          <li className="bg-slate-900 px-3 py-1 rounded list-none"><strong>80%:</strong> 4 uses</li>
+          <li className="bg-slate-900 px-3 py-1 rounded list-none"><strong>100%:</strong> 5 uses</li>
+        </div>
+        <p className="mt-4 text-sm text-slate-400">A use counts as a singular post/turn. Infusing chakra into a blade using the chakra metal counts as a use, but lasts for 1 turn per 20% ninjutsu level.</p>
+      </Section>
+    </div>
+  );
+}
+
+// --- REUSABLE COMPONENTS ---
+
+function Section({ title, children }) {
+  return (
+    <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 md:p-8">
+      <h3 className="text-2xl font-bold text-white mb-6 border-b border-slate-800 pb-2 flex items-center gap-2">
+        <span className="w-2 h-6 bg-cyan-500 rounded-full inline-block"></span>
+        {title}
+      </h3>
+      <div className="text-slate-300 leading-relaxed text-[15px]">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function RankCard({ 
+  title, 
+  samurai, 
+  age, 
+  desc, 
+  startStats, 
+  startSkills, 
+  maxStats, 
+  maxSkills, 
+  startTechs, 
+  maxTechs, 
+  rankUp,
+  retirementWarning,
+  sanninRequirements
+}) {
+  return (
+    <div className="bg-slate-900/80 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
+      <div className="bg-slate-950 p-5 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h4 className="text-2xl font-black text-white">{title}</h4>
+          {samurai && <p className="text-sm text-cyan-400 font-medium mt-1">Samurai Equivalent: {samurai}</p>}
+        </div>
+        <div className="bg-slate-900 px-4 py-2 rounded-lg border border-slate-800 inline-flex items-center gap-2 shrink-0">
+          <span className="text-xs uppercase text-slate-500 font-bold tracking-widest">Min Age</span>
+          <span className="text-xl font-bold text-white">{age}</span>
+        </div>
+      </div>
+      
+      <div className="p-5">
+        <p className="text-slate-300 text-sm mb-6">{desc}</p>
+
+        {retirementWarning && (
+          <div className="bg-red-950/40 border border-red-800 p-4 rounded-lg mb-6">
+            <h5 className="text-red-400 font-bold text-sm uppercase tracking-wider mb-2">Retirement Penalty</h5>
+            <p className="text-sm text-red-200/80">
+              If your character is a Village Leader/Kage who retires or for any reason becomes a former leader, you can <strong>no longer upgrade your stats or skills</strong>. You are stuck at the stat and skill levels that you had when you left the position, even if you have not yet reached the max outs for your former title. This has been done to prevent people from trying to obtain these max outs without dealing with the jobs that come with the position. 
+              <br/><br/>
+              This is <strong>non-negotiable</strong> so make sure you get to the stat and skill levels you desire before stepping down. Things like dojutsu, jin, curse mark, sage, or other non-basic skill % are not affected by this.
+            </p>
+          </div>
+        )}
+        
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="space-y-4">
+            <div className="bg-slate-950 p-4 rounded border border-slate-800">
+              <h5 className="text-xs uppercase font-bold text-slate-500 mb-2 border-b border-slate-800 pb-2">Starting Levels</h5>
+              <div className="space-y-2 text-sm text-slate-300">
+                <p><strong className="text-white">Stats:</strong> {startStats}</p>
+                <p><strong className="text-white">Skills:</strong> {startSkills}</p>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-slate-950 p-4 rounded border border-slate-800">
+              <h5 className="text-xs uppercase font-bold text-slate-500 mb-2 border-b border-slate-800 pb-2">Max Outs (Caps)</h5>
+              <div className="space-y-2 text-sm text-slate-300">
+                <p><strong className="text-white">Stats:</strong> {maxStats}</p>
+                <p><strong className="text-white">Skills:</strong> {maxSkills}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-slate-950 p-4 rounded border border-slate-800">
+             <h5 className="text-xs uppercase font-bold text-slate-500 mb-2 border-b border-slate-800 pb-2">Starting Technique Slots</h5>
+             <div className="text-sm text-slate-300">{startTechs}</div>
+          </div>
+          <div className="bg-slate-950 p-4 rounded border border-slate-800">
+             <h5 className="text-xs uppercase font-bold text-slate-500 mb-2 border-b border-slate-800 pb-2">Rank Technique Max Out</h5>
+             <div className="text-sm text-slate-300">{maxTechs}</div>
+          </div>
+        </div>
+
+        {sanninRequirements && (
+          <div className="bg-cyan-950/30 border border-cyan-800 p-4 rounded-lg mt-6">
+            <h5 className="text-cyan-400 font-bold text-sm uppercase tracking-wider mb-3">How to gain Sannin Rank</h5>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-cyan-100/80 ml-2">
+              <li>Your character must have been loyal to your village.</li>
+              <li>You must be an ANBU or Jonin before advancing.</li>
+              <li>Your Kage must agree (both IC and OOC) with you getting the position. Your Kage must be the one who desires you to take it.</li>
+              <li>You must have done at least 2 major things that have aided, saved, or otherwise helped your village. Staff will determine what counts (e.g., saving the Kage, saving a major piece of the village, heading the defense of a village, playing a major role in a war, etc).</li>
+              <li>Staff must agree with the decision for you to become Sannin. Staff will vote on it. The answer of yes or no will be based off past or current issues OOC in the server, RP skill, and the way you handle yourself - NOT personal opinions or friendships between you and staff members.</li>
+            </ol>
+            <p className="mt-3 text-sm text-cyan-300 italic font-medium">Do not ask staff about becoming a Sannin or ask your Kage to ask unless you can pass the above things.</p>
+          </div>
+        )}
+
+        {rankUp && (
+          <div className="bg-slate-800/30 p-4 rounded border border-slate-700/50 text-sm text-slate-300">
+            <strong className="text-cyan-400 block mb-1">How to Rank Up:</strong>
+            <p>{rankUp}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PoisonCard({ title, desc, children }) {
+  return (
+    <div className="bg-slate-900/80 p-5 rounded-lg border border-slate-700">
+      <h4 className="text-cyan-400 font-bold text-lg mb-1">{title}</h4>
+      <p className="text-slate-400 text-sm mb-3">{desc}</p>
+      <ul className="space-y-2 text-sm text-slate-300">
+        {children}
+      </ul>
+    </div>
+  );
+}
+
+function TemplateBox({ title, content }) {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-slate-950 p-5 rounded-lg border border-slate-700 font-mono text-sm relative group">
+      <div className="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+        <p className="text-white font-bold font-sans text-base">{title}</p>
+        <button 
+          onClick={handleCopy}
+          className="text-slate-400 hover:text-cyan-400 flex items-center gap-1 text-xs font-sans transition-colors"
+        >
+          {copied ? <span className="text-green-400">Copied!</span> : <><Copy size={14}/> Copy</>}
+        </button>
+      </div>
+      <pre className="text-cyan-200 whitespace-pre-wrap font-mono leading-relaxed">{content}</pre>
+    </div>
+  );
+}
